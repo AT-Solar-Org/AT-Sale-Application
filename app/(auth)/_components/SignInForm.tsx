@@ -6,10 +6,10 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">
       <form 
         onSubmit={(e) => e.preventDefault()}
-        className="bg-white flex items-center justify-center flex-col px-8 md:px-12 h-full text-center"
+        className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"
       >
         <img
           src="/images/at_solar_logo.png"
