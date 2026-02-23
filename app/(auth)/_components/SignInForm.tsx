@@ -62,7 +62,7 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
           className="md:hidden w-full text-center text-sm mt-3 mb-1 p-0 text-blue-500 bg-transparent border-none cursor-pointer underline hover:text-blue-700"
           onClick={onSwitch}
         >
-          Don't have an account?
+          Don&apos;t have an account?
         </button>
 
         <button 
