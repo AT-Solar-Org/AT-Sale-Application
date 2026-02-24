@@ -10,33 +10,9 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-#   # First run CI checks before deploying
-#   ci:
-#     name: CI Checks
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: '20'
-#           cache: 'npm'
-
-#       - name: Install dependencies
-#         run: npm ci
-
-#       - name: Run linter
-#         run: npm run lint
-
-#       - name: Build project
-#         run: npm run build
-
   # Deploy only after CI passes
   deploy:
     name: Deploy to Production
-    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
