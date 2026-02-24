@@ -71,10 +71,17 @@ Add the following secrets to your GitHub repository:
 
 #### 3. Deployment Workflow
 
-The CI/CD pipeline will automatically:
+The CI/CD pipeline is split into two separate workflows:
 
-- **On Pull Requests:** Deploy a preview version and comment the preview URL on the PR
-- **On Push to Main:** Deploy to production
+**CI (Continuous Integration)** - `.github/workflows/ci.yml`
+- Runs on **Pull Requests** to main branch
+- Performs lint checks and build verification
+- Does NOT deploy (keeps PR code off production)
+
+**CD (Continuous Deployment)** - `.github/workflows/cd.yml`
+- Runs on **Push to Main** branch only
+- First runs CI checks (lint & build)
+- Then deploys to production (only if CI passes)
 
 ### Manual Deployment
 
