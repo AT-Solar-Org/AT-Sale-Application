@@ -82,6 +82,8 @@ export default function SignUpMore() {
             src="/images/at_solar_logo.webp"
             alt="App Logo"
             className="w-20 md:w-24 h-auto mb-5"
+            height={80}
+            width={80}
           />
 
           <h1 className="font-semibold text-3xl md:text-4xl text-[#3D46B9] mb-2">
