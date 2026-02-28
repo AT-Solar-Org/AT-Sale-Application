@@ -8,7 +8,7 @@ export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
 
   return (
-    <div className="bg-[#D8E5FB] flex justify-center items-center flex-col font-sans min-h-screen p-6">
+    <div className="bg-slate-900 flex justify-center items-center flex-col font-sans min-h-screen p-6">
       <div className={`bg-white rounded-[18px] shadow-[0_18px_36px_rgba(0,0,0,0.25),0_12px_14px_rgba(0,0,0,0.22)] relative overflow-hidden w-full max-w-md md:max-w-225 min-h-[500px] md:min-h-140 ${isSignUp ? 'md:right-panel-active' : ''}`}>
         
         {/* Sign Up Form - Shows on mobile when isSignUp is true */}
@@ -54,7 +54,7 @@ export default function AuthPage() {
                 isSignUp ? "translate-x-0" : "-translate-x-[20%]"
               }`}
               style={{
-                backgroundImage: "url('/images/signup-bg.png')",
+                backgroundImage: "url('/images/signup-bg.webp')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
@@ -83,7 +83,7 @@ export default function AuthPage() {
                 isSignUp ? "translate-x-[20%]" : "translate-x-0"
               }`}
               style={{
-                backgroundImage: "url('/images/signin-bg.png')",
+                backgroundImage: "url('/images/signin-bg.webp')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}

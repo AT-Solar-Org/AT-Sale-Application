@@ -10,7 +10,7 @@ export default function ForgotPasswordForm() {
             className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 h-full text-center"
           >
             <img
-              src="/images/at_solar_logo.png"
+              src="/images/at_solar_logo.webp"
               alt="App Logo"
               className="w-20 md:w-24 h-auto mb-5"
             />
