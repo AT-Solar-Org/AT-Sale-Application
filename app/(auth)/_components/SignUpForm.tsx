@@ -8,15 +8,23 @@ import Image from 'next/image'
 export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Store sign up data in localStorage
+    localStorage.setItem("signupData", JSON.stringify({ name, email, password }));
+    router.push("/signup");
+  };
 
   return (
     <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">
       <form 
-        onSubmit={(e) => {
-          e.preventDefault();
-          router.push("/signup");
-        }}
+        onSubmit={handleSubmit}
         className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"
       >
         <Image
@@ -26,12 +34,22 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
           height={80}
           width={80}
         />
-        <h1 className="font-semibold text-3xl md:text-4xl text-[#3D46B9] mb-4">Create Account</h1>
+        <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Create Account</h1>
+
+        <input 
+          type="text" 
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
+        />
 
         <input 
           type="email" 
           placeholder="Email"
-          className="bg-[#eee] border-none p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-gray-800 placeholder:text-gray-600 focus:bg-[#e2e2e2] focus:ring-2 focus:ring-blue-500"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
 
         {/* Password */}
@@ -39,7 +57,9 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="bg-[#eee] border-none p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-gray-800 placeholder:text-gray-600 focus:bg-[#e2e2e2] focus:ring-2 focus:ring-blue-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
           <button
             type="button"
@@ -60,7 +80,9 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
           <input
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm Password"
-            className="bg-[#eee] border-none p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-gray-800 placeholder:text-gray-600 focus:bg-[#e2e2e2] focus:ring-2 focus:ring-blue-500"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
           <button
             type="button"
@@ -78,14 +100,14 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
 
         <button
           type="button"
-          className="md:hidden w-full text-center text-sm mt-3 mb-1 p-0 text-blue-500 bg-transparent border-none cursor-pointer underline hover:text-blue-700"
+          className="md:hidden w-full text-center text-sm mt-3 mb-1 p-0 text-[#EA580C] bg-transparent border-none cursor-pointer underline hover:text-[#c2410c]"
           onClick={onSwitch}
         >
           Already have an account?
         </button>
 
         <button 
-          className="rounded-full bg-[#3D46B9] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#2d36a0]"
+          className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#c2410c]"
           type="submit"
         >
           Sign Up

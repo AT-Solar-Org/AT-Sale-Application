@@ -21,19 +21,19 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
           width={80}
         />
 
-        <h1 className="font-semibold text-3xl md:text-4xl text-orange-600 mb-4">Sign In</h1>
+        <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Sign In</h1>
 
         <input 
           type="email" 
           placeholder="Email"
-          className="bg-slate-100 border-none p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-orange-500"
+          className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
 
         <div className="relative w-full my-2">
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="bg-slate-100 border-none p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-orange-500"
+            className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
           <button
             type="button"
@@ -51,21 +51,21 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
 
         <a 
           href="/forgot-password" 
-          className="w-full text-right text-xs mt-1.5 mb-4 text-slate-500 no-underline hover:text-orange-600 transition-colors"
+          className="w-full text-right text-xs mt-1.5 mb-4 text-slate-500 no-underline hover:text-[#EA580C] transition-colors"
         >
           Forgot your password?
         </a>
 
         <button
           type="button"
-          className="md:hidden w-full text-center text-sm mt-3 mb-1 p-0 text-orange-600 bg-transparent border-none cursor-pointer underline hover:text-orange-700"
+          className="md:hidden w-full text-center text-sm mt-3 mb-1 p-0 text-[#EA580C] bg-transparent border-none cursor-pointer underline hover:text-[#c2410c]"
           onClick={onSwitch}
         >
           Don&apos;t have an account?
         </button>
 
         <button 
-          className="rounded-full bg-orange-600 text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-orange-700"
+          className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#c2410c]"
           type="submit"
         >
           Sign In

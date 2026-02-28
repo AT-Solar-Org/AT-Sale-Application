@@ -60,15 +60,15 @@ export default function AuthPage() {
               }}
             >
               {/* Dark overlay for text readability */}
-              <div className="absolute inset-0 bg-[#3D46B9]/80"></div>
+              <div className="absolute inset-0 bg-[#0F172A]/70"></div>
               
               <div className="relative z-10">
-                <h1 className="font-semibold text-4xl mb-4 text-white">Welcome Back!</h1>
+                <h1 className="font-semibold text-4xl mb-4 text-white">Hello, Friend!</h1>
                 <p className="text-sm leading-5 tracking-wide my-5 mx-0 text-white">
-                  To keep connected with us please login with your personal info
+                  Enter your personal details and start you journey with us
                 </p>
                 <button
-                  className="bg-transparent border border-white rounded-full py-3 px-11 text-xs tracking-wider uppercase transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-[#3D46B9]"
+                  className="bg-transparent border border-white rounded-lg py-3 px-11 text-xs tracking-wider uppercase transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-[#0F172A]"
                   type="button"
                   onClick={() => setIsSignUp(false)}
                 >
@@ -89,15 +89,15 @@ export default function AuthPage() {
               }}
             >
               {/* Dark overlay for text readability */}
-              <div className="absolute inset-0 bg-[#5f72db]/80"></div>
+              <div className="absolute inset-0 bg-[#0F172A]/70"></div>
               
               <div className="relative z-10">
                 <h1 className="font-semibold text-4xl mb-4 text-white">Hello, Friend!</h1>
                 <p className="text-sm leading-5 tracking-wide my-5 mx-0 text-white">
-                  Enter your personal details and start journey with us
+                  Enter your personal details and start you journey with us
                 </p>
                 <button
-                  className="bg-transparent border border-white rounded-full py-3 px-11 text-xs tracking-wider uppercase transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-[#5f72db]"
+                  className="bg-transparent border border-white rounded-lg py-3 px-11 text-xs tracking-wider uppercase transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-[#0F172A]"
                   type="button"
                   onClick={() => setIsSignUp(true)}
                 >
