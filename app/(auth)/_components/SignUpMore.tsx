@@ -58,7 +58,7 @@ export default function SignUpMore() {
     localStorage.setItem("pendingEmail", form.email);
     localStorage.removeItem("signupData");
     console.log("Submitted:", { ...form, idCardFile });
-    router.push("/signup/pending");
+    router.push("/signup/verify-email");
   }
 
   const inputClass = "bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] text-sm";
@@ -87,7 +87,7 @@ export default function SignUpMore() {
             <input type="text" name="surname" placeholder="นามสกุล (Surname)" value={form.surname} onChange={handleChange} required className={inputClass} />
           </div>
 
-          <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required className={inputClass} />
+          <input type="email" name="email" placeholder={form.email || "Email"} value={form.email} onChange={handleChange} required className={inputClass} />
           <input type="tel" name="phone" placeholder="เบอร์โทรศัพท์ (Phone no.)" value={form.phone} onChange={handleChange} required maxLength={10} className={inputClass} />
           <input type="text" name="nationalId" placeholder="เลขบัตรประชาชน (National ID)" value={form.nationalId} onChange={handleChange} required maxLength={13} className={inputClass} />
 
