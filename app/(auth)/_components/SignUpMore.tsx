@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { LuUpload, LuX, LuCheck } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import Image from 'next/image'
 
 export default function SignUpMore() {
   const router = useRouter();
@@ -57,7 +58,7 @@ export default function SignUpMore() {
           </h2>
           <p className="text-sm text-gray-500 mb-6 leading-relaxed">
             Your information has been sent to the admin for review.
-            You'll be notified once your account is approved.
+            You`&apos`ll be notified once your account is approved.
           </p>
           <button
             onClick={() => router.push("/auth")}
@@ -77,7 +78,7 @@ export default function SignUpMore() {
           onSubmit={handleSubmit}
           className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 h-full text-center"
         >
-          <img
+          <Image
             src="/images/at_solar_logo.webp"
             alt="App Logo"
             className="w-20 md:w-24 h-auto mb-5"
@@ -160,7 +161,7 @@ export default function SignUpMore() {
               </button>
             ) : (
               <div className="relative w-full rounded-lg overflow-hidden border border-gray-200">
-                <img
+                <Image
                   src={idCardPreview}
                   alt="ID Card Preview"
                   className="w-full h-36 object-cover"

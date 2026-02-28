@@ -1,5 +1,7 @@
 "use client";
 
+import Image from 'next/image'
+
 export default function ForgotPasswordForm() {
   return (
     <div className="bg-[#D8E5FB] flex justify-center items-center flex-col font-sans min-h-screen p-6">
@@ -9,7 +11,7 @@ export default function ForgotPasswordForm() {
             onSubmit={(e) => e.preventDefault()}
             className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 h-full text-center"
           >
-            <img
+            <Image
               src="/images/at_solar_logo.webp"
               alt="App Logo"
               className="w-20 md:w-24 h-auto mb-5"

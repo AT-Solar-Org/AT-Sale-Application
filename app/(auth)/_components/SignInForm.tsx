@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
+import Image from 'next/image'
 
 export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,10 +13,12 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
         onSubmit={(e) => e.preventDefault()}
         className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"
       >
-        <img
-          src="/images/at_solar_logo.png"
+        <Image
+          src="/images/at_solar_logo.webp"
           alt="App Logo"
           className="w-20 md:w-24 h-auto mb-5"
+          height={80}
+          width={80}
         />
 
         <h1 className="font-semibold text-3xl md:text-4xl text-orange-600 mb-4">Sign In</h1>
