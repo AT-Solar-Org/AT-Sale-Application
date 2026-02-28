@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import { useRouter } from "next/navigation";
-import Image from 'next/image'
+import Image from 'next/image';
 
 export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,8 +15,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Store sign up data in localStorage
-    localStorage.setItem("signupData", JSON.stringify({ name, email, password }));
+    localStorage.setItem("signupData", JSON.stringify({ email, password }));
     router.push("/signup");
   };
 
@@ -37,18 +35,11 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Create Account</h1>
 
         <input 
-          type="text" 
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
-        />
-
-        <input 
           type="email" 
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
           className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
 
@@ -59,6 +50,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
             className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
           <button
@@ -67,11 +59,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             onClick={() => setShowPassword(!showPassword)}
             aria-label="Toggle password visibility"
           >
-            {showPassword ? (
-              <LuEyeClosed className="w-6 h-6 text-slate-800" />
-            ) : (
-              <LuEye className="w-6 h-6 text-slate-800" />
-            )}
+            {showPassword ? <LuEyeClosed className="w-6 h-6 text-slate-800" /> : <LuEye className="w-6 h-6 text-slate-800" />}
           </button>
         </div>
 
@@ -82,6 +70,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            required
             className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
           <button
@@ -90,11 +79,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             aria-label="Toggle confirm password visibility"
           >
-            {showConfirmPassword ? (
-              <LuEyeClosed className="w-6 h-6 text-slate-800" />
-            ) : (
-              <LuEye className="w-6 h-6 text-slate-800" />
-            )}
+            {showConfirmPassword ? <LuEyeClosed className="w-6 h-6 text-slate-800" /> : <LuEye className="w-6 h-6 text-slate-800" />}
           </button>
         </div>
 
