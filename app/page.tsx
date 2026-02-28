@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-orange-50 to-white">
+    <div className="flex items-center justify-center min-h-screen bg-linear-to-b from-orange-50 to-white">
       <div className="text-center px-4">
         <h1 className="text-5xl font-bold text-[#0F172A] mb-4">
           AT Sale Application

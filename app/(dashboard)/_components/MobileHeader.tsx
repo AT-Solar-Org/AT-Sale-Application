@@ -9,7 +9,7 @@ interface MobileHeaderProps {
 
 export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
   return (
-    <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-20 shadow-sm">
+    <div className="lg:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-20 shadow-sm">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full border-2 border-[#EA580C] bg-white flex items-center justify-center overflow-hidden">
           <Image

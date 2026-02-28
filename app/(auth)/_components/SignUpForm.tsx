@@ -40,7 +40,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   };
 
   return (
-    <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">
+    <div className="w-full h-full min-h-125 md:min-h-full flex items-center justify-center">
       <form 
         onSubmit={handleSubmit}
         className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"

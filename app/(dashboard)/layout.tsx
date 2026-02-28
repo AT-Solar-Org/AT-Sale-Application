@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "./_components/Sidebar";
 import MobileHeader from "./_components/MobileHeader";
+import MobileDrawer from "./_components/MobileDrawer";
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -20,9 +22,10 @@ export default function DashboardLayout({
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col lg:flex-row">
       <Sidebar />
-      <MobileHeader />
+      <MobileHeader onMenuClick={() => setIsMenuOpen(true)} />
+      <MobileDrawer isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );

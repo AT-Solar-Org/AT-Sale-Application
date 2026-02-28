@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { LuClock, LuMailCheck, LuLoader, LuCircleCheckBig } from "react-icons/lu";
 
 function getInitialEmail(): string {
@@ -54,15 +53,6 @@ export default function PendingApproval() {
     return (
       <div className="bg-[#0F172A] flex justify-center items-center flex-col font-sans min-h-screen p-6">
         <div className="bg-white rounded-[18px] shadow-[0_18px_36px_rgba(0,0,0,0.25),0_12px_14px_rgba(0,0,0,0.22)] w-full max-w-md p-10 flex flex-col items-center text-center">
-          
-          <Image
-            src="/images/at_solar_logo.webp"
-            alt="App Logo"
-            className="w-16 h-auto mb-6"
-            width={64}
-            height={64}
-          />
-
           <div className="w-20 h-20 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center mb-6">
             <LuCircleCheckBig className="w-10 h-10 text-green-600" />
           </div>
@@ -90,15 +80,6 @@ export default function PendingApproval() {
   return (
     <div className="bg-[#0F172A] flex justify-center items-center flex-col font-sans min-h-screen p-6">
       <div className="bg-white rounded-[18px] shadow-[0_18px_36px_rgba(0,0,0,0.25),0_12px_14px_rgba(0,0,0,0.22)] w-full max-w-md p-10 flex flex-col items-center text-center">
-        
-        <Image
-          src="/images/at_solar_logo.webp"
-          alt="App Logo"
-          className="w-16 h-auto mb-6"
-          width={64}
-          height={64}
-        />
-
         <div className="w-20 h-20 rounded-full bg-orange-50 border-2 border-orange-200 flex items-center justify-center mb-6">
           <LuClock className="w-9 h-9 text-[#EA580C] animate-pulse" />
         </div>

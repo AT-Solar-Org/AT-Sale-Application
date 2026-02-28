@@ -4,11 +4,14 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   LuLayoutDashboard,
-  LuFileText,
   LuUsers,
+  LuCircleUser,
   LuSettings,
   LuLogOut,
   LuCalendar,
+  LuChartNoAxesCombined,
+  LuHouse,
+  LuUserCheck,
 } from "react-icons/lu";
 
 interface SidebarItemProps {
@@ -47,17 +50,20 @@ export default function Sidebar() {
 
   const menuItems = [
     { icon: LuLayoutDashboard, label: "Dashboard", href: "/dashboard" },
+    { icon: LuHouse, label: "Sales Home", href: "/sales" },
+    { icon: LuUsers, label: "Customers", href: "/customers" },
     { icon: LuCalendar, label: "Maintenance", href: "/maintenance" },
-    { icon: LuFileText, label: "Reports", href: "/reports" },
+    { icon: LuChartNoAxesCombined, label: "Reports", href: "/reports" },
   ];
 
   const managementItems = [
-    { icon: LuUsers, label: "Users", href: "/users" },
+    { icon: LuUserCheck, label: "Approvals", href: "/approvals" },
+    { icon: LuCircleUser, label: "Users", href: "/users" },
     { icon: LuSettings, label: "Settings", href: "/settings" },
   ];
 
   return (
-    <div className="hidden md:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-screen sticky top-0 shadow-xl shadow-black/10 z-20 text-white">
+    <div className="hidden lg:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-screen sticky top-0 shadow-xl shadow-black/10 z-20 text-white">
       {/* Logo */}
       <div className="p-6 flex items-center gap-3 mb-2">
         <div className="w-12 h-12 bg-white rounded-full border-2 border-[#EA580C] flex items-center justify-center shadow-sm shrink-0 relative overflow-hidden">
@@ -88,7 +94,7 @@ export default function Sidebar() {
             icon={item.icon}
             label={item.label}
             href={item.href}
-            active={pathname === item.href}
+            active={pathname === item.href || pathname.startsWith(item.href + "/")}
             onClick={() => router.push(item.href)}
           />
         ))}
@@ -102,7 +108,7 @@ export default function Sidebar() {
             icon={item.icon}
             label={item.label}
             href={item.href}
-            active={pathname === item.href}
+            active={pathname === item.href || pathname.startsWith(item.href + "/")}
             onClick={() => router.push(item.href)}
           />
         ))}
@@ -110,7 +116,10 @@ export default function Sidebar() {
 
       {/* User Profile */}
       <div className="p-4 border-t border-slate-800 bg-slate-900">
-        <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-700 group">
+        <div 
+          onClick={() => router.push("/profile")}
+          className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-700 group"
+        >
           <div className="w-10 h-10 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-bold">
             A
           </div>
@@ -121,7 +130,10 @@ export default function Sidebar() {
             <p className="text-xs text-slate-400 truncate">admin@at-energy.com</p>
           </div>
           <button
-            onClick={handleLogout}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLogout();
+            }}
             className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
           >
             <LuLogOut

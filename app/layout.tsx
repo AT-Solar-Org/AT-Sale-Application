@@ -11,6 +11,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "AT Sale Application",
   description: "Your sales management solution",
+  icons: {
+    icon: "/images/at_solar_logo.webp",
+    apple: "/images/at_solar_logo.webp",
+  },
 };
 
 export default function RootLayout({
