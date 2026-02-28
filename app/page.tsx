@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <div className="text-center px-4">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">
+        <h1 className="text-5xl font-bold text-[#0F172A] mb-4">
           AT Sale Application
         </h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-slate-600 mb-8">
           Your complete sales management solution
         </p>
         <div className="flex gap-4 justify-center">
           <Link
             href="/auth"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-[#EA580C] text-white rounded-lg hover:bg-[#c2410c] transition-colors"
           >
             Get Started
           </Link>

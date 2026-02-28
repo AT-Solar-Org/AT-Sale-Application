@@ -44,3 +44,32 @@ jobs:
           echo "### Production Deployment Successful! 🚀" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Production URL:** $url" >> $GITHUB_STEP_SUMMARY
+
+      # Discord notification on success
+      - name: Discord Notification (Success)
+        if: success()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          title: "🚀 Production Deployed"
+          description: |
+            ✅ Deployment successful!
+            **URL:** ${{ steps.deploy.outputs.url }}
+            **Branch:** main
+            **Deployed by:** ${{ github.actor }}
+          color: 0x00FF00
+
+      # Discord notification on failure
+      - name: Discord Notification (Failure)
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          title: "❌ Deployment Failed"
+          description: |
+            Deployment to production failed!
+            **Branch:** main
+            **Author:** ${{ github.actor }}
+          color: 0xFF0000
