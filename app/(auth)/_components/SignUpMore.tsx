@@ -110,6 +110,8 @@ export default function SignUpMore() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  // const inputClass = "bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] text-sm";
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -178,6 +180,8 @@ export default function SignUpMore() {
               onChange={handleChange} onBlur={handleBlur} className={fieldClass("phone")} />
             {errors.phone && <p className="text-xs text-red-500 text-left">{errors.phone}</p>}
           </div>
+
+          {/* <input type="email" name="email" placeholder={form.email || "Email"} value={form.email} onChange={handleChange} required className={inputClass} /> */}
 
           {/* National ID */}
           <div className="w-full">

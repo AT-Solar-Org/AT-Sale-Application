@@ -92,11 +92,11 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         />
         <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Create Account</h1>
 
-        {error && (
+        {/* {errors && (
           <div className="w-full p-3 mb-2 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-            {error}
+            {errors}
           </div>
-        )}
+        )} */}
 
         <input
           type="email"

@@ -10,25 +10,26 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  // async function handleSubmit(e: React.FormEvent) {
+  //   e.preventDefault();
+  //   setError("");
+  //   setLoading(true);
 
-    // Mock API delay
-    await new Promise((res) => setTimeout(res, 800));
+  //   // Mock API delay
+  //   await new Promise((res) => setTimeout(res, 800));
 
-    // TODO: replace with real API call
-    // Mock: treat any login as wrong credentials for demo
-    const mockSuccess = false;
+  //   // TODO: replace with real API call
+  //   // Mock: treat any login as wrong credentials for demo
+  //   const mockSuccess = false;
 
-    if (!mockSuccess) {
-      setError("Your email or password is incorrect. Please try again.");
-    }
-    setLoading(false);
-  }
+  //   if (!mockSuccess) {
+  //     setError("Your email or password is incorrect. Please try again.");
+  //   }
+  //   setLoading(false);
+  // }
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
