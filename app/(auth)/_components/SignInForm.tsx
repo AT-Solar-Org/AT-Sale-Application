@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LuEye, LuEyeClosed, LuCircleAlert } from "react-icons/lu";
 import Image from "next/image";
 
@@ -28,6 +29,16 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
     }
     setLoading(false);
   }
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In real app, validate credentials with API and check approval status
+    // For now, simulate that user needs approval
+    localStorage.setItem("accountStatus", "pending");
+    localStorage.setItem("emailVerified", "true");
+    router.push("/pending");
+  };
 
   return (
     <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">

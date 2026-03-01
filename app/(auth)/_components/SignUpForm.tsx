@@ -35,10 +35,22 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
+function getInitialEmail(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const savedData = localStorage.getItem("signupData");
+    if (!savedData) return "";
+    const { email } = JSON.parse(savedData);
+    return email || "";
+  } catch {
+    return "";
+  }
+}
+
 export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(getInitialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
@@ -79,6 +91,12 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
           width={80}
         />
         <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Create Account</h1>
+
+        {error && (
+          <div className="w-full p-3 mb-2 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
 
         <input
           type="email"

@@ -130,7 +130,8 @@ export default function SignUpMore() {
     localStorage.setItem("accountStatus", "pending");
     localStorage.setItem("pendingEmail", form.email);
     localStorage.removeItem("signupData");
-    router.push("/signup/pending");
+    console.log("Submitted:", { ...form, idCardFile });
+    router.push("/signup/verify-email");
   }
 
   function fieldClass(field: keyof typeof errors) {
