@@ -3,30 +3,21 @@
 import { useState } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { supabase } from "lib/supabase";
 import Image from 'next/image';
 
-function getInitialEmail(): string {
-  if (typeof window === "undefined") return "";
-  try {
-    const savedData = localStorage.getItem("signupData");
-    if (!savedData) return "";
-    const { email } = JSON.parse(savedData);
-    return email || "";
-  } catch {
-    return "";
-  }
-}
 
 export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [email, setEmail] = useState(getInitialEmail);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     
@@ -34,9 +25,27 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
       setError("Passwords do not match");
       return;
     }
+
+    setLoading(true);
     
-    localStorage.setItem("signupData", JSON.stringify({ email, password }));
-    router.push("/signup");
+  const { data, error: signUpError } = await supabase.auth.signUp({
+    email: email.trim(),
+    password: password,
+  });
+
+  setLoading(false);
+
+  if (signUpError) {
+    setError(signUpError.message);
+    return;
+  }
+
+    alert("Please complete your profile");
+    if (data.user) {
+      // Store email so SignUpMore can pre-fill it without needing an active session
+      localStorage.setItem("pendingSignUpEmail", email.trim());
+      router.push(`/signup?email=${encodeURIComponent(email.trim())}`);
+    }
   };
 
   return (
@@ -118,10 +127,11 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         </button>
 
         <button 
+          disabled={loading}
           className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#c2410c]"
           type="submit"
         >
-          Sign Up
+          {loading ? "Creating account..." : "Sign Up"}
         </button>
       </form>
     </div>

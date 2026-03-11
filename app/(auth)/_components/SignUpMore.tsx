@@ -1,42 +1,60 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { LuUpload, LuX } from "react-icons/lu";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { supabase } from "lib/supabase";
 import Image from 'next/image';
 
-// Read localStorage once outside the component — safe, no effect needed
-function getInitialEmail(): string {
-  if (typeof window === "undefined") return "";
-  try {
-    const savedData = localStorage.getItem("signupData");
-    if (!savedData) return "";
-    const { email } = JSON.parse(savedData);
-    return email || "";
-  } catch {
-    return "";
-  }
-}
 
 export default function SignUpMore() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Initialize email directly — no useEffect required
   const [form, setForm] = useState({
     name: "",
     surname: "",
-    email: getInitialEmail(),
+    email: "",
     phone: "",
     nationalId: "",
     bankAccount: "",
   });
 
+  useEffect(() => {
+    //  Try query param first
+    const emailFromQuery = searchParams.get("email");
+    // Fall back to localStorage
+    const emailFromStorage = localStorage.getItem("pendingSignUpEmail");
+    const resolvedEmail = emailFromQuery ?? emailFromStorage ?? "";
+
+    if (resolvedEmail) {
+      setForm((prev) => ({ ...prev, email: resolvedEmail }));
+      return;
+    }
+
+    // If neither exists, check for live session
+    async function checkUser() {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        router.push("/auth");
+        return;
+      }
+      setForm((prev) => ({ ...prev, email: userData.user.email ?? "" }));
+    }
+
+    checkUser();
+  }, []);
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -52,13 +70,45 @@ export default function SignUpMore() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    localStorage.setItem("accountStatus", "pending");
-    localStorage.setItem("pendingEmail", form.email);
-    localStorage.removeItem("signupData");
-    console.log("Submitted:", { ...form, idCardFile });
-    router.push("/signup/verify-email");
+    setLoading(true);
+    
+    // Save profile data to localStorage.
+    // The actual DB insert happens in /callback AFTER the user clicks the
+    // email verification link, so we have a valid session at that point.
+    localStorage.setItem("pendingProfileData", JSON.stringify({
+      fullname: `${form.name} ${form.surname}`,
+      email: form.email,
+      phonenumber: form.phone,
+      idcardnumber: form.nationalId,
+      bank_account_no: form.bankAccount,
+      status: "pending",
+      role: "sale",
+      is_approved: false,
+    }));
+
+    // Send the verification email
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: form.email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/callback`,
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    // Clean up the temporary signup email key
+    localStorage.removeItem("pendingSignUpEmail");
+
+    // Redirect to a "check your email" holding page
+    router.push(`/signup/verify-email?email=${encodeURIComponent(form.email)}`);
   }
 
   const inputClass = "bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] text-sm";
