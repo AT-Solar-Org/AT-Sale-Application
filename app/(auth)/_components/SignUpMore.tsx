@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { LuUpload, LuX } from "react-icons/lu";
 import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import Image from 'next/image';
 
 
@@ -39,6 +39,7 @@ export default function SignUpMore() {
 
     // If neither exists, check for live session
     async function checkUser() {
+      const supabase = createClient();
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
         router.push("/auth");
@@ -87,6 +88,8 @@ export default function SignUpMore() {
       role: "sale",
       is_approved: false,
     }));
+
+    const supabase = createClient();
 
     // Send the verification email
     const { error } = await supabase.auth.resend({

@@ -1,56 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useActionState, useEffect } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import { useRouter } from "next/navigation";
-import { supabase } from "lib/supabase";
 import Image from 'next/image';
+import { signup } from "@/app/actions";
+
+type ActionState = {
+  error?: string;
+  success?: boolean;
+  email?: string;
+};
+
+const initialState: ActionState = {};
 
 
 export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [clientError, setClientError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
+  const [state, formAction, isPending] = useActionState(signup, initialState);
+
+  useEffect(() => {
+    if (state?.success && state?.email) {
+      alert("Please complete your profile");
+      localStorage.setItem("pendingSignUpEmail", state.email);
+      router.push(`/signup?email=${encodeURIComponent(state.email)}`);
     }
+    // We don't need to manually clear clientError when state?.error changes.
+  }, [state, router]);
 
-    setLoading(true);
-    
-  const { data, error: signUpError } = await supabase.auth.signUp({
-    email: email.trim(),
-    password: password,
-  });
-
-  setLoading(false);
-
-  if (signUpError) {
-    setError(signUpError.message);
-    return;
-  }
-
-    alert("Please complete your profile");
-    if (data.user) {
-      // Store email so SignUpMore can pre-fill it without needing an active session
-      localStorage.setItem("pendingSignUpEmail", email.trim());
-      router.push(`/signup?email=${encodeURIComponent(email.trim())}`);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // Basic client validation before calling action
+    if (password !== confirmPassword) {
+      e.preventDefault();
+      setClientError("Passwords do not match");
+      return;
     }
   };
 
   return (
     <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">
       <form 
+        action={formAction}
         onSubmit={handleSubmit}
         className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"
       >
@@ -63,17 +59,17 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         />
         <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Create Account</h1>
 
-        {error && (
+        {/* Error mapping from either client-side or server action */}
+        {(clientError || state?.error) && (
           <div className="w-full p-3 mb-2 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-            {error}
+            {clientError || state?.error}
           </div>
         )}
 
         <input 
           type="email" 
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           required
           className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
@@ -82,6 +78,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         <div className="relative w-full my-2">
           <input
             type={showPassword ? "text" : "password"}
+            name="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -127,11 +124,11 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         </button>
 
         <button 
-          disabled={loading}
-          className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#c2410c]"
+          disabled={isPending}
+          className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#c2410c] disabled:opacity-50"
           type="submit"
         >
-          {loading ? "Creating account..." : "Sign Up"}
+          {isPending ? "Creating account..." : "Sign Up"}
         </button>
       </form>
     </div>

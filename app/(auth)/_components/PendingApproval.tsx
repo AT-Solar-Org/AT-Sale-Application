@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { LuClock, LuMailCheck } from "react-icons/lu";
 
@@ -12,6 +12,7 @@ export default function PendingApproval() {
 
   useEffect(() => {
     async function checkStatus() {
+      const supabase = createClient();
       const { data: userData } = await supabase.auth.getUser();
 
       if (!userData?.user) {

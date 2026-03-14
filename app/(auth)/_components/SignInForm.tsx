@@ -1,81 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "lib/supabase";
+import { useState, useActionState } from "react";
+import { login } from "@/app/actions";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import Image from 'next/image'
 
+type ActionState = {
+  error?: string;
+};
+
+const initialState: ActionState = {};
+
 export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const router = useRouter();
+  const [state, formAction, isPending] = useActionState(login, initialState);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg("");
-    setLoading(true);
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-
-    if (error) {
-      setLoading(false);
-      if (error.message.includes("Email not confirmed")) {
-        setErrorMsg("Please verify your email before logging in.");
-      } else {
-        setErrorMsg(error.message);
-      }
-      return;
-    }
-
-    const user = data?.user;
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
-    // Fetch profile
-    const { data: profile, error: pErr } = await supabase
-      .from("users")
-      .select("is_approved, status, role")
-      .eq("id", user.id)
-      .single();
-
-    setLoading(false);
-
-    if (pErr || !profile) {
-      setErrorMsg("Profile not found.");
-      router.push(`/signup?email=${encodeURIComponent(user.email ?? "")}`);
-      return;
-    }
-
-    // Admin
-    if (profile.role === "admin") {
-      router.push("/dashboard");
-      return;
-    }
-
-    // Not approved
-    if (!profile.is_approved || profile.status === "pending") {
-      router.push("/pending");
-      return;
-    }
-
-    // Normal user
-    router.push("/dashboard");
-  };
 
 
   return (
     <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">
       <form 
-        onSubmit={handleSubmit}
+        action={formAction}
         className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"
       >
         <Image
@@ -88,18 +33,17 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
 
         <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Sign In</h1>
 
-        {errorMsg && (
+        {state?.error && (
           <div className="w-full p-3 mb-2 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-            {errorMsg}
+            {state.error}
           </div>
         )}
 
         {/* Email */}
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           required
           className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
@@ -108,9 +52,8 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
         <div className="relative w-full my-2">
           <input
             type={showPassword ? "text" : "password"}
+            name="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
             className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
@@ -143,11 +86,11 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
         </button>
 
         <button
-          disabled={loading}
-          className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 uppercase mt-4 hover:bg-[#c2410c]"
+          disabled={isPending}
+          className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 uppercase mt-4 hover:bg-[#c2410c] disabled:opacity-50"
           type="submit"
         >
-          {loading ? "Logging in..." : "Sign In"}
+          {isPending ? "Logging in..." : "Sign In"}
         </button>
       </form>
     </div>
