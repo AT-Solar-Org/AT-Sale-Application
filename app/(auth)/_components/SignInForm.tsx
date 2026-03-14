@@ -63,6 +63,7 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
           value={email}
           onChange={(e) => { setEmail(e.target.value); setError(""); }}
           required
+          autoComplete="email"
           className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
 
@@ -73,6 +74,7 @@ export default function SignInForm({ onSwitch }: { onSwitch: () => void }) {
             value={password}
             onChange={(e) => { setPassword(e.target.value); setError(""); }}
             required
+            autoComplete="current-password"
             className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
           />
           <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -50,12 +50,20 @@ function getInitialEmail(): string {
 export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [email, setEmail] = useState(getInitialEmail);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
   const [passwordFocused, setPasswordFocused] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const init = getInitialEmail();
+    if (init) {
+      // eslint-disable-next-line
+      setEmail(init);
+    }
+  }, []);
 
   function validate(): boolean {
     const newErrors: typeof errors = {};
@@ -104,6 +112,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          autoComplete="email"
           className="bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
         />
 
@@ -117,6 +126,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             onFocus={() => setPasswordFocused(true)}
             onBlur={() => setPasswordFocused(false)}
             required
+            autoComplete="new-password"
             className={`bg-slate-100 border p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] ${errors.password ? "border-red-400" : "border-slate-300"}`}
           />
           <button
@@ -145,6 +155,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             value={confirmPassword}
             onChange={(e) => { setConfirmPassword(e.target.value); setErrors((p) => ({ ...p, confirm: undefined })); }}
             required
+            autoComplete="new-password"
             className={`bg-slate-100 border p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] ${errors.confirm ? "border-red-400" : "border-slate-300"}`}
           />
           <button

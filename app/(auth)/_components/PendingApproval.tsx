@@ -13,9 +13,14 @@ function getInitialEmail(): string {
 export default function PendingApproval() {
   const router = useRouter();
   const [status, setStatus] = useState<"waiting" | "approved">("waiting");
-  const [email] = useState(getInitialEmail);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
+    const init = getInitialEmail();
+    if (init) {
+      // eslint-disable-next-line
+      setEmail(init);
+    }
     const accountStatus = localStorage.getItem("accountStatus");
     const emailVerified = localStorage.getItem("emailVerified");
     
@@ -25,12 +30,14 @@ export default function PendingApproval() {
       return;
     }
 
+    let redirectTimer: NodeJS.Timeout;
+
     // Prototype: Simulate admin approval after 3 seconds
     const approvalTimer = setTimeout(() => {
       setStatus("approved");
       
       // After 2 seconds of "processing", redirect to dashboard
-      setTimeout(() => {
+      redirectTimer = setTimeout(() => {
         localStorage.removeItem("accountStatus");
         localStorage.removeItem("pendingEmail");
         localStorage.removeItem("emailVerified");
@@ -47,6 +54,7 @@ export default function PendingApproval() {
 
     return () => {
       clearTimeout(approvalTimer);
+      if (redirectTimer) clearTimeout(redirectTimer);
     };
   }, [router]);
 
