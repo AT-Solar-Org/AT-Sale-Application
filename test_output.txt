@@ -1,0 +1,159 @@
+FAIL __tests__/components/SignUpForm.test.tsx
+  SignUpForm Component
+    √ renders correctly (203 ms)
+    × validates password requirements and confirms match (136 ms)
+    √ submits successfully with valid matching passwords (67 ms)
+    √ loads the initial email from localStorage (17 ms)
+
+  ● SignUpForm Component › validates password requirements and confirms match
+
+    TestingLibraryElementError: Unable to find an element with the text: /Password does not meet all requirements/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center"[39m
+        [36m>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"[39m
+          [36m>[39m
+            [36m<img[39m
+              [33malt[39m=[32m"App Logo"[39m
+              [33mclass[39m=[32m"w-20 md:w-24 h-auto mb-5"[39m
+              [33mdata-nimg[39m=[32m"1"[39m
+              [33mdecoding[39m=[32m"async"[39m
+              [33mheight[39m=[32m"80"[39m
+              [33mloading[39m=[32m"lazy"[39m
+              [33msrc[39m=[32m"/_next/image?url=%2Fimages%2Fat_solar_logo.webp&w=256&q=75"[39m
+              [33msrcset[39m=[32m"/_next/image?url=%2Fimages%2Fat_solar_logo.webp&w=96&q=75 1x, /_next/image?url=%2Fimages%2Fat_solar_logo.webp&w=256&q=75 2x"[39m
+              [33mstyle[39m=[32m"color: transparent;"[39m
+              [33mwidth[39m=[32m"80"[39m
+            [36m/>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4"[39m
+            [36m>[39m
+              [0mCreate Account[0m
+            [36m</h1>[39m
+            [36m<input[39m
+              [33mautocomplete[39m=[32m"email"[39m
+              [33mclass[39m=[32m"bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"[39m
+              [33mplaceholder[39m=[32m"Email"[39m
+              [33mrequired[39m=[32m""[39m
+              [33mtype[39m=[32m"email"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative w-full my-2"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mautocomplete[39m=[32m"new-password"[39m
+                [33mclass[39m=[32m"bg-slate-100 border p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] border-slate-300"[39m
+                [33mplaceholder[39m=[32m"Password"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mtype[39m=[32m"password"[39m
+                [33mvalue[39m=[32m"weak"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Toggle password visibility"[39m
+                [33mclass[39m=[32m"absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 transition-opacity hover:opacity-70"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"w-6 h-6 text-slate-800"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"1em"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"1em"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative w-full my-2"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mautocomplete[39m=[32m"new-password"[39m
+                [33mclass[39m=[32m"bg-slate-100 border p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] border-slate-300"[39m
+                [33mplaceholder[39m=[32m"Confirm Password"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mtype[39m=[32m"password"[39m
+                [33mvalue[39m=[32m"weak2"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"Toggle confirm password visibility"[39m
+                [33mclass[39m=[32m"absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 transition-opacity hover:opacity-70"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"w-6 h-6 text-slate-800"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"1em"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"1em"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"md:hidden w-full text-center text-sm mt-3 mb-1 p-0 text-[#EA580C] bg-transparent border-none cursor-pointer underline hover:text-[#c2410c]"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mAlready have an account?[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform active:scale-95 mt-4 cursor-pointer border-none hover:bg-[#c2410c]"[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [0mSign Up[0m
+            [36m</button>[39m
+          [36m</form>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</body>[39m
+
+    [0m [90m 47 |[39m
+     [90m 48 |[39m     [90m// Expect error messages[39m
+    [31m[1m>[22m[39m[90m 49 |[39m     expect(screen[33m.[39mgetByText([35m/Password does not meet all requirements/i[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m    |[39m                   [31m[1m^[22m[39m
+     [90m 50 |[39m     expect(screen[33m.[39mgetByText([35m/Passwords do not match/i[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m 51 |[39m   })[33m;[39m
+     [90m 52 |[39m[0m
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at getByText (node_modules/@testing-library/dom/dist/query-helpers.js:95:19)
+      at Object.<anonymous> (__tests__/components/SignUpForm.test.tsx:49:19)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 passed, 4 total
+Snapshots:   0 total
+Time:        3.205 s
+Ran all test suites matching __tests__/components/SignUpForm.test.tsx.
