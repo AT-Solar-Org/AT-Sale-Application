@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "lib/supabase";
 import Image from 'next/image';
 
-
 export default function SignUpMore() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -14,6 +13,12 @@ export default function SignUpMore() {
   const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fileError, setFileError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const MAX_FILE_SIZE_MB = 5;
+  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
   const [form, setForm] = useState({
     name: "",
@@ -25,9 +30,7 @@ export default function SignUpMore() {
   });
 
   useEffect(() => {
-    //  Try query param first
     const emailFromQuery = searchParams.get("email");
-    // Fall back to localStorage
     const emailFromStorage = localStorage.getItem("pendingSignUpEmail");
     const resolvedEmail = emailFromQuery ?? emailFromStorage ?? "";
 
@@ -36,7 +39,6 @@ export default function SignUpMore() {
       return;
     }
 
-    // If neither exists, check for live session
     async function checkUser() {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
@@ -49,11 +51,61 @@ export default function SignUpMore() {
     checkUser();
   }, []);
 
+  // Validate a single field
+  function validateField(name: string, value: string): string | undefined {
+    switch (name) {
+      case "name":
+      case "surname":
+        if (!value.trim()) return "This field is required";
+        return undefined;
+      case "email":
+        if (!value.trim()) return "Email is required";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Invalid email address";
+        return undefined;
+      case "phone":
+        if (!value.trim()) return "Phone number is required";
+        if (!/^\d{10}$/.test(value)) return "Must be exactly 10 digits";
+        return undefined;
+      case "nationalId":
+        if (!value.trim()) return "National ID is required";
+        if (!/^\d{13}$/.test(value)) return "Must be exactly 13 digits";
+        return undefined;
+      case "bankAccount":
+        if (!value.trim()) return "Bank account is required";
+        if (!/^\d{10,15}$/.test(value)) return "Must be 10–15 digits";
+        return undefined;
+      default:
+        return undefined;
+    }
+  }
+
+  // Validate all fields before submit
+  function validateAll(): boolean {
+    const newErrors: Record<string, string | undefined> = {};
+    (Object.keys(form) as (keyof typeof form)[]).forEach((key) => {
+      const error = validateField(key, form[key]);
+      if (error) newErrors[key] = error;
+    });
+    setErrors(newErrors);
+    setTouched({
+      name: true, surname: true, email: true,
+      phone: true, nationalId: true, bankAccount: true,
+    });
+    return Object.keys(newErrors).length === 0;
+  }
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }
+
+  // Was missing — caused onBlur to fail
+  function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    const error = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: error }));
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -78,11 +130,44 @@ export default function SignUpMore() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Validate before submitting
+    if (!validateAll()) return;
+
     setLoading(true);
-    
-    // Save profile data to localStorage.
-    // The actual DB insert happens in /callback AFTER the user clicks the
-    // email verification link, so we have a valid session at that point.
+
+    // Get password saved by SignUpForm
+    const password = localStorage.getItem("pendingSignUpPassword") ?? "";
+ 
+    if (!password) {
+      setLoading(false);
+      alert("Session expired. Please sign up again.");
+      router.push("/auth");
+      return;
+    }
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: form.email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/callback`,
+      },
+    });
+ 
+    if (signUpError) {
+      setLoading(false);
+      alert(signUpError.message);
+      return;
+    }
+ 
+    // Detect duplicate email (Supabase returns empty identities array)
+    if (data.user?.identities?.length === 0) {
+      setLoading(false);
+      alert("An account with this email already exists. Please sign in.");
+      router.push("/auth");
+      return;
+    }
+
     localStorage.setItem("pendingProfileData", JSON.stringify({
       fullname: `${form.name} ${form.surname}`,
       email: form.email,
@@ -94,32 +179,17 @@ export default function SignUpMore() {
       is_approved: false,
     }));
 
-    // Send the verification email
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email: form.email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/callback`,
-      },
-    });
-
-    setLoading(false);
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    // Clean up the temporary signup email key
+    // Clean up credentials
     localStorage.removeItem("pendingSignUpEmail");
-
-    // Redirect to a "check your email" holding page
+    localStorage.removeItem("pendingSignUpPassword");
+ 
+    setLoading(false);
     router.push(`/signup/verify-email?email=${encodeURIComponent(form.email)}`);
   }
 
-  function fieldClass(field: keyof typeof errors) {
+  function fieldClass(field: string) {
     return `bg-slate-100 border p-3 my-1 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] text-sm ${
-      errors[field] ? "border-red-400" : "border-slate-300"
+      errors[field] && touched[field] ? "border-red-400" : "border-slate-300"
     }`;
   }
 
@@ -138,12 +208,12 @@ export default function SignUpMore() {
             <div className="w-full">
               <input type="text" name="name" placeholder="ชื่อ (Name)" value={form.name}
                 onChange={handleChange} onBlur={handleBlur} className={fieldClass("name")} />
-              {errors.name && <p className="text-xs text-red-500 text-left">{errors.name}</p>}
+              {errors.name && touched.name && <p className="text-xs text-red-500 text-left">{errors.name}</p>}
             </div>
             <div className="w-full">
               <input type="text" name="surname" placeholder="นามสกุล (Surname)" value={form.surname}
                 onChange={handleChange} onBlur={handleBlur} className={fieldClass("surname")} />
-              {errors.surname && <p className="text-xs text-red-500 text-left">{errors.surname}</p>}
+              {errors.surname && touched.surname && <p className="text-xs text-red-500 text-left">{errors.surname}</p>}
             </div>
           </div>
 
@@ -151,7 +221,7 @@ export default function SignUpMore() {
           <div className="w-full">
             <input type="email" name="email" placeholder="Email" value={form.email}
               onChange={handleChange} onBlur={handleBlur} className={fieldClass("email")} />
-            {errors.email && <p className="text-xs text-red-500 text-left">{errors.email}</p>}
+            {errors.email && touched.email && <p className="text-xs text-red-500 text-left">{errors.email}</p>}
           </div>
 
           {/* Phone */}
@@ -159,17 +229,15 @@ export default function SignUpMore() {
             <input type="text" inputMode="numeric" name="phone"
               placeholder="เบอร์โทรศัพท์ (Phone) — 10 digits" value={form.phone}
               onChange={handleChange} onBlur={handleBlur} className={fieldClass("phone")} />
-            {errors.phone && <p className="text-xs text-red-500 text-left">{errors.phone}</p>}
+            {errors.phone && touched.phone && <p className="text-xs text-red-500 text-left">{errors.phone}</p>}
           </div>
-
-          {/* <input type="email" name="email" placeholder={form.email || "Email"} value={form.email} onChange={handleChange} required className={inputClass} /> */}
 
           {/* National ID */}
           <div className="w-full">
             <input type="text" inputMode="numeric" name="nationalId"
               placeholder="เลขบัตรประชาชน (National ID) — 13 digits" value={form.nationalId}
               onChange={handleChange} onBlur={handleBlur} className={fieldClass("nationalId")} />
-            {errors.nationalId && <p className="text-xs text-red-500 text-left">{errors.nationalId}</p>}
+            {errors.nationalId && touched.nationalId && <p className="text-xs text-red-500 text-left">{errors.nationalId}</p>}
           </div>
 
           {/* ID Card Upload */}
@@ -210,14 +278,15 @@ export default function SignUpMore() {
             <input type="text" inputMode="numeric" name="bankAccount"
               placeholder="เลขบัญชีธนาคาร (Bank Account No.) — 10–15 digits" value={form.bankAccount}
               onChange={handleChange} onBlur={handleBlur} className={fieldClass("bankAccount")} />
-            {errors.bankAccount && <p className="text-xs text-red-500 text-left">{errors.bankAccount}</p>}
+            {errors.bankAccount && touched.bankAccount && <p className="text-xs text-red-500 text-left">{errors.bankAccount}</p>}
           </div>
 
           <button
-            className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 tracking-wider uppercase transition-transform active:scale-95 mt-6 cursor-pointer border-none hover:bg-[#c2410c] w-full"
+            disabled={loading}
+            className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 tracking-wider uppercase transition-transform active:scale-95 mt-6 cursor-pointer border-none hover:bg-[#c2410c] w-full disabled:opacity-60"
             type="submit"
           >
-            Submit for Approval
+            {loading ? "Sending verification..." : "Submit for Approval"}
           </button>
 
           <a href="/auth" className="block mt-5 text-center text-xs text-slate-500 no-underline hover:text-[#EA580C] transition-colors">

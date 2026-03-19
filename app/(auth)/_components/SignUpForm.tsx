@@ -15,7 +15,34 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({});
   const router = useRouter();
+
+  const PASSWORD_RULES = [
+    { label: "At least 8 characters", test: (v: string) => v.length >= 8 },
+    { label: "At least one uppercase letter", test: (v: string) => /[A-Z]/.test(v) },
+    { label: "At least one lowercase letter", test: (v: string) => /[a-z]/.test(v) },
+    { label: "At least one number", test: (v: string) => /[0-9]/.test(v) },
+    { label: "At least one special character (!@#$%^&*...)", test: (v: string) => /[^A-Za-z0-9]/.test(v) },
+  ];
+
+  function PasswordStrength({ password }: { password: string }) {
+    if (!password) return null;
+    return (
+      <ul className="w-full text-left mt-1 mb-2 space-y-1">
+        {PASSWORD_RULES.map((rule) => {
+          const passed = rule.test(password);
+          return (
+            <li key={rule.label} className={`text-xs flex items-center gap-1.5 ${passed ? "text-green-600" : "text-red-500"}`}>
+              <span className="shrink-0">{passed ? "✓" : "✗"}</span>
+              {rule.label}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,24 +55,12 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
 
     setLoading(true);
     
-  const { data, error: signUpError } = await supabase.auth.signUp({
-    email: email.trim(),
-    password: password,
-  });
 
-  setLoading(false);
-
-  if (signUpError) {
-    setError(signUpError.message);
-    return;
-  }
-
-    alert("Please complete your profile");
-    if (data.user) {
-      // Store email so SignUpMore can pre-fill it without needing an active session
-      localStorage.setItem("pendingSignUpEmail", email.trim());
-      router.push(`/signup?email=${encodeURIComponent(email.trim())}`);
-    }
+    localStorage.setItem("pendingSignUpEmail", email.trim());
+    localStorage.setItem("pendingSignUpPassword", password);
+ 
+    setLoading(false);
+    router.push(`/signup?email=${encodeURIComponent(email.trim())}`);
   };
 
   return (
