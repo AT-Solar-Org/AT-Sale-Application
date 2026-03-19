@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { LuUpload, LuX } from "react-icons/lu";
+import { LuUpload, LuX, LuFileText } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+const ACCEPTED_TYPES = "image/jpeg,image/png,image/webp,application/pdf";
+
+function isImageFile(file: File) {
+  return file.type.startsWith("image/");
+}
 
 function getInitialEmail(): string {
   if (typeof window === "undefined") return "";
@@ -18,6 +23,16 @@ function getInitialEmail(): string {
   } catch {
     return "";
   }
+}
+
+// Converts a File to a base64 data URL string for localStorage storage
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export default function SignUpMore() {
@@ -36,48 +51,41 @@ export default function SignUpMore() {
     bankAccount: "",
   });
 
-  // touched tracks whether a field has been blurred — errors only show after that
   const [touched, setTouched] = useState<Partial<Record<keyof typeof form | "idCard", boolean>>>({});
-  const [errors, setErrors] = useState<Partial<Record<keyof typeof form | "idCard", string>>>({});
+  const [errors, setErrors]   = useState<Partial<Record<keyof typeof form | "idCard", string>>>({});
   const [fileError, setFileError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  // ── Validation rules ────────────────────────────────────────────
+  // ── Validation ──────────────────────────────────────────────────
   function validateField(name: string, value: string): string {
     switch (name) {
-      case "name":
-      case "surname":
-        return value.trim() ? "" : `${name === "name" ? "Name" : "Surname"} is required.`;
-      case "email":
-        return value.trim() ? "" : "Email is required.";
+      case "email":     return value.trim() ? "" : "Email is required.";
+      case "name":      return value.trim() ? "" : "Name is required.";
+      case "surname":   return value.trim() ? "" : "Surname is required.";
       case "phone":
-        if (!value) return "Phone number is required.";
+        if (!value)              return "Phone number is required.";
         if (value.length !== 10) return "Must be exactly 10 digits.";
         if (!value.startsWith("0")) return "Must start with 0.";
         return "";
       case "nationalId":
-        if (!value) return "National ID is required.";
+        if (!value)              return "National ID is required.";
         if (value.length !== 13) return "Must be exactly 13 digits.";
         return "";
       case "bankAccount":
-        if (!value) return "Bank account number is required.";
+        if (!value)                              return "Bank account number is required.";
         if (value.length < 10 || value.length > 15) return "Must be 10–15 digits.";
         return "";
-      default:
-        return "";
+      default: return "";
     }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-
     if (["phone", "nationalId", "bankAccount"].includes(name) && !/^\d*$/.test(value)) return;
-    if (name === "phone" && value.length > 10) return;
-    if (name === "nationalId" && value.length > 13) return;
+    if (name === "phone"       && value.length > 10) return;
+    if (name === "nationalId"  && value.length > 13) return;
     if (name === "bankAccount" && value.length > 15) return;
-
     setForm((prev) => ({ ...prev, [name]: value }));
-
-    // Live-update error only if field was already touched
     if (touched[name as keyof typeof touched]) {
       setErrors((prev) => ({ ...prev, [name]: validateField(name, value) || undefined }));
     }
@@ -99,7 +107,7 @@ export default function SignUpMore() {
     }
     setFileError("");
     setIdCardFile(file);
-    setIdCardPreview(URL.createObjectURL(file));
+    setIdCardPreview(isImageFile(file) ? URL.createObjectURL(file) : null);
     setErrors((prev) => ({ ...prev, idCard: undefined }));
   }
 
@@ -110,12 +118,9 @@ export default function SignUpMore() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  // const inputClass = "bg-slate-100 border border-slate-300 p-3 my-2 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] text-sm";
-
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Mark everything touched and validate all
     const allTouched = Object.keys(form).reduce((acc, k) => ({ ...acc, [k]: true }), {});
     setTouched({ ...allTouched, idCard: true });
 
@@ -125,14 +130,42 @@ export default function SignUpMore() {
       if (err) newErrors[key] = err;
     });
     if (!idCardFile) newErrors.idCard = "Please upload a photo of your ID card.";
-
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
+
+    setSubmitting(true);
+
+    // Convert file → base64 so it survives localStorage
+    const idCardBase64 = await fileToBase64(idCardFile!);
+
+    // Build new request entry
+    const newRequest = {
+      id: `req_${Date.now()}`,
+      email:       form.email,
+      name:        form.name,
+      surname:     form.surname,
+      phone:       form.phone,
+      nationalId:  form.nationalId,
+      bankAccount: form.bankAccount,
+      idCardData:  idCardBase64,       // base64 data URL
+      idCardName:  idCardFile!.name,
+      idCardType:  idCardFile!.type,   // e.g. "image/jpeg" or "application/pdf"
+      requestDate: new Date().toLocaleDateString("en-GB", {
+        day: "2-digit", month: "short", year: "numeric",
+      }),
+      status: "Pending" as const,
+      note: "",
+    };
+
+    // Append to existing requests array in localStorage
+    const existing = JSON.parse(localStorage.getItem("saleApprovalRequests") || "[]");
+    localStorage.setItem("saleApprovalRequests", JSON.stringify([...existing, newRequest]));
 
     localStorage.setItem("accountStatus", "pending");
     localStorage.setItem("pendingEmail", form.email);
     localStorage.removeItem("signupData");
-    console.log("Submitted:", { ...form, idCardFile });
+
+    setSubmitting(false);
     router.push("/signup/verify-email");
   }
 
@@ -149,8 +182,15 @@ export default function SignUpMore() {
           <Image src="/images/at_solar_logo.webp" alt="App Logo" className="w-20 md:w-24 h-auto mb-5" width={80} height={80} />
           <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-2">Complete Profile</h1>
           <p className="text-sm leading-5 tracking-wide mb-6 text-slate-500">
-            Fill in your details below. Your info will be reviewed by an admin.
+            Please fill in your information below <br /> so we can verify your account and activate your access.
           </p>
+
+          {/* Email */}
+          <div className="w-full">
+            <input type="email" name="email" placeholder="Email" value={form.email}
+              onChange={handleChange} onBlur={handleBlur} className={fieldClass("email")} />
+            {errors.email && <p className="text-xs text-red-500 text-left">{errors.email}</p>}
+          </div>
 
           {/* Name + Surname */}
           <div className="flex gap-3 w-full">
@@ -166,13 +206,6 @@ export default function SignUpMore() {
             </div>
           </div>
 
-          {/* Email */}
-          <div className="w-full">
-            <input type="email" name="email" placeholder="Email" value={form.email}
-              onChange={handleChange} onBlur={handleBlur} className={fieldClass("email")} />
-            {errors.email && <p className="text-xs text-red-500 text-left">{errors.email}</p>}
-          </div>
-
           {/* Phone */}
           <div className="w-full">
             <input type="text" inputMode="numeric" name="phone"
@@ -180,8 +213,6 @@ export default function SignUpMore() {
               onChange={handleChange} onBlur={handleBlur} className={fieldClass("phone")} />
             {errors.phone && <p className="text-xs text-red-500 text-left">{errors.phone}</p>}
           </div>
-
-          {/* <input type="email" name="email" placeholder={form.email || "Email"} value={form.email} onChange={handleChange} required className={inputClass} /> */}
 
           {/* National ID */}
           <div className="w-full">
@@ -193,7 +224,7 @@ export default function SignUpMore() {
 
           {/* ID Card Upload */}
           <div className="w-full my-2">
-            {!idCardPreview ? (
+            {!idCardFile ? (
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -203,22 +234,35 @@ export default function SignUpMore() {
               >
                 <div className="flex items-center gap-2">
                   <LuUpload className="w-4 h-4" />
-                  อัปโหลดรูปบัตรประชาชน (Upload ID Card Photo)
+                  อัปโหลดรูปบัตรประชาชน (Upload ID Card)
                 </div>
-                <span className="text-xs text-slate-400">JPG, PNG — max {MAX_FILE_SIZE_MB}MB</span>
+                <span className="text-xs text-slate-400">JPG, PNG, WebP, PDF — max {MAX_FILE_SIZE_MB}MB</span>
               </button>
-            ) : (
+            ) : idCardPreview ? (
               <div className="relative w-full h-36 rounded-lg overflow-hidden border border-slate-200">
                 <Image src={idCardPreview} alt="ID Card Preview" className="object-cover" fill />
                 <button type="button" onClick={removeFile} className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors">
                   <LuX className="w-3 h-3" />
                 </button>
                 <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-xs px-3 py-1 truncate">
-                  {idCardFile?.name} — {idCardFile ? (idCardFile.size / 1024 / 1024).toFixed(1) : 0}MB
+                  {idCardFile.name} — {(idCardFile.size / 1024 / 1024).toFixed(1)}MB
                 </div>
               </div>
+            ) : (
+              <div className="flex items-center justify-between w-full bg-slate-100 border border-slate-300 rounded-lg px-4 py-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <LuFileText className="w-6 h-6 text-[#EA580C] shrink-0" />
+                  <div className="text-left min-w-0">
+                    <p className="text-sm text-slate-800 font-medium truncate">{idCardFile.name}</p>
+                    <p className="text-xs text-slate-400">{(idCardFile.size / 1024 / 1024).toFixed(1)}MB</p>
+                  </div>
+                </div>
+                <button type="button" onClick={removeFile} className="bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors shrink-0 ml-3">
+                  <LuX className="w-3 h-3" />
+                </button>
+              </div>
             )}
-            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} className="hidden" />
+            <input ref={fileInputRef} type="file" accept={ACCEPTED_TYPES} onChange={handleFileChange} className="hidden" />
             {(fileError || errors.idCard) && (
               <p className="text-xs text-red-500 text-left mt-1">{fileError || errors.idCard}</p>
             )}
@@ -233,10 +277,11 @@ export default function SignUpMore() {
           </div>
 
           <button
-            className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 tracking-wider uppercase transition-transform active:scale-95 mt-6 cursor-pointer border-none hover:bg-[#c2410c] w-full"
+            disabled={submitting}
+            className="rounded-lg bg-[#EA580C] text-white text-xs font-bold py-3 tracking-wider uppercase transition-all active:scale-95 mt-6 cursor-pointer border-none hover:bg-[#c2410c] w-full disabled:opacity-60 disabled:cursor-not-allowed"
             type="submit"
           >
-            Submit for Approval
+            {submitting ? "Submitting…" : "Submit for Approval"}
           </button>
 
           <a href="/auth" className="block mt-5 text-center text-xs text-slate-500 no-underline hover:text-[#EA580C] transition-colors">

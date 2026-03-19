@@ -7,8 +7,8 @@ import {
   LuFileText,
   LuUsers,
   LuSettings,
-  LuLogOut,
   LuCalendar,
+  LuUserCheck,
 } from "react-icons/lu";
 
 interface SidebarItemProps {
@@ -40,19 +40,15 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    router.push("/auth");
-  };
-
   const menuItems = [
     { icon: LuLayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: LuCalendar, label: "Maintenance", href: "/maintenance" },
-    { icon: LuFileText, label: "Reports", href: "/reports" },
+    { icon: LuUsers, label: "Customer", href: "/customer" },
+    { icon: LuCalendar, label: "Calendar", href: "/calendar" },
+    { icon: LuFileText, label: "Report", href: "/report" },
   ];
 
   const managementItems = [
-    { icon: LuUsers, label: "Users", href: "/users" },
+    { icon: LuUserCheck, label: "Sale Approval", href: "/sale-approval" },
     { icon: LuSettings, label: "Settings", href: "/settings" },
   ];
 
@@ -71,9 +67,6 @@ export default function Sidebar() {
         </div>
         <div className="leading-tight">
           <span className="font-black text-lg text-white block tracking-tight">AT ENERGY</span>
-          <span className="text-[10px] font-bold text-slate-400 tracking-wider">
-            & ENGINEERING
-          </span>
         </div>
       </div>
 
@@ -108,27 +101,18 @@ export default function Sidebar() {
         ))}
       </div>
 
-      {/* User Profile */}
-      <div className="p-4 border-t border-slate-800 bg-slate-900">
-        <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 hover:shadow-sm cursor-pointer transition-all border border-transparent hover:border-slate-700 group">
-          <div className="w-10 h-10 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-white font-bold">
-            A
+      {/* User profile — display only, not clickable */}
+      <div className="p-4 border-t border-slate-800">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/60 border border-slate-700/50">
+          <div className="relative shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-black text-sm shadow-md">
+              A
+            </div>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-white truncate group-hover:text-[#EA580C] transition-colors">
-              Admin User
-            </p>
+            <p className="text-sm font-bold text-white truncate">Admin User</p>
             <p className="text-xs text-slate-400 truncate">admin@at-energy.com</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-          >
-            <LuLogOut
-              size={18}
-              className="text-slate-500 group-hover:text-red-400 transition-colors"
-            />
-          </button>
         </div>
       </div>
     </div>
