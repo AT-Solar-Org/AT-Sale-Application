@@ -8,49 +8,54 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleAuth = async () => {
-      const { data, error } = await supabase.auth.getSession();
+    // onAuthStateChange fires once the token in the URL hash has been
+    // exchanged for a real session — getSession() fires too early and
+    // returns null before that exchange completes.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          const user = session.user;
 
-      if (error || !data.session) {
-        console.error(error);
-        router.replace("/auth");
-        return;
-      }
+          // Check if public.users row already exists (prevents duplicate inserts)
+          const { data: existing } = await supabase
+            .from("users")
+            .select("id")
+            .eq("id", user.id)
+            .single();
 
-      const user = data.session.user;
+          if (!existing) {
+            const raw = localStorage.getItem("pendingProfileData");
 
-      // Check if this user already has a profile
-      const { data: existing } = await supabase
-        .from("users")
-        .select("id")
-        .eq("id", user.id)
-        .single();
+            if (raw) {
+              const profileData = JSON.parse(raw);
 
-      if (!existing) {
-        // First time — read the profile data saved in SignUpMore
-        const raw = localStorage.getItem("pendingProfileData");
+              const { error: insertError } = await supabase
+                .from("users")
+                .upsert({ id: user.id, ...profileData });
 
-        if (raw) {
-          const profileData = JSON.parse(raw);
-
-          const { error: insertError } = await supabase.from("users").upsert({
-            id: user.id,
-            ...profileData,
-          });
-
-          if (insertError) {
-            console.error("Failed to insert user profile:", insertError.message);
-            // Don't block — still redirect to pending so user isn't stuck
+              if (insertError) {
+                console.error("Failed to insert user profile:", insertError.message);
+              } else {
+                localStorage.removeItem("pendingProfileData");
+              }
+            } else {
+              // localStorage empty (opened in different browser/tab)
+              // Send back to fill the form again
+              subscription.unsubscribe();
+              router.replace(`/signup?email=${encodeURIComponent(user.email ?? "")}`);
+              return;
+            }
           }
 
-          localStorage.removeItem("pendingProfileData");
+          subscription.unsubscribe();
+          router.replace("/pending");
         }
       }
+    );
 
-      router.replace("/pending");
+    return () => {
+      subscription.unsubscribe();
     };
-
-    handleAuth();
   }, [router]);
 
   return (

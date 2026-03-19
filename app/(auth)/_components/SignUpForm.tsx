@@ -50,7 +50,7 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
 
   return (
     <div className="w-full h-full min-h-[500px] md:min-h-full flex items-center justify-center">
-      <form 
+      <form
         onSubmit={handleSubmit}
         className="bg-white flex items-center justify-center flex-col px-8 md:px-12 py-10 md:py-0 w-full text-center"
       >
@@ -63,14 +63,14 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
         />
         <h1 className="font-semibold text-3xl md:text-4xl text-[#0F172A] mb-4">Create Account</h1>
 
-        {error && (
+        {/* {errors && (
           <div className="w-full p-3 mb-2 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-            {error}
+            {errors}
           </div>
-        )}
+        )} */}
 
-        <input 
-          type="email" 
+        <input
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -84,9 +84,11 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: undefined, confirm: undefined })); }}
+            onFocus={() => setPasswordFocused(true)}
+            onBlur={() => setPasswordFocused(false)}
             required
-            className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
+            className={`bg-slate-100 border p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] ${errors.password ? "border-red-400" : "border-slate-300"}`}
           />
           <button
             type="button"
@@ -98,15 +100,23 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
           </button>
         </div>
 
+        {/* Live password rules — show while focused or if error */}
+        {(passwordFocused || errors.password) && password && (
+          <PasswordStrength password={password} />
+        )}
+        {errors.password && !passwordFocused && (
+          <p className="text-xs text-red-500 w-full text-left mb-1">{errors.password}</p>
+        )}
+
         {/* Confirm Password */}
         <div className="relative w-full my-2">
           <input
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm Password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => { setConfirmPassword(e.target.value); setErrors((p) => ({ ...p, confirm: undefined })); }}
             required
-            className="bg-slate-100 border border-slate-300 p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C]"
+            className={`bg-slate-100 border p-3 pr-12 w-full rounded-lg outline-none transition-all duration-300 text-slate-800 placeholder:text-slate-500 focus:bg-slate-200 focus:ring-2 focus:ring-[#EA580C] ${errors.confirm ? "border-red-400" : "border-slate-300"}`}
           />
           <button
             type="button"
@@ -117,6 +127,9 @@ export default function SignUpForm({ onSwitch }: { onSwitch: () => void }) {
             {showConfirmPassword ? <LuEyeClosed className="w-6 h-6 text-slate-800" /> : <LuEye className="w-6 h-6 text-slate-800" />}
           </button>
         </div>
+        {errors.confirm && (
+          <p className="text-xs text-red-500 w-full text-left mb-1">{errors.confirm}</p>
+        )}
 
         <button
           type="button"
