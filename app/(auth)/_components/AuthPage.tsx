@@ -53,9 +53,10 @@ export default function AuthPage() {
             >
               <div className="absolute inset-0 bg-[#0F172A]/70" />
               <div className="relative z-10">
-                <h1 className="font-semibold text-4xl mb-4 text-white">Hello, Friend!</h1>
+                <h1 className="font-semibold text-4xl mb-4 text-white">Welcome back!</h1>
                 <p className="text-sm leading-5 tracking-wide my-5 text-white">
-                  Enter your personal details and start your journey with us
+                  Sign in to continue managing <br/ >
+                  your sales and customers.
                 </p>
                 <button
                   className="bg-transparent border border-white rounded-lg py-3 px-11 text-xs tracking-wider uppercase transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-[#0F172A]"
@@ -76,9 +77,9 @@ export default function AuthPage() {
             >
               <div className="absolute inset-0 bg-[#0F172A]/70" />
               <div className="relative z-10">
-                <h1 className="font-semibold text-4xl mb-4 text-white">Hello, Friend!</h1>
+                <h1 className="font-semibold text-4xl mb-4 text-white">New here?</h1>
                 <p className="text-sm leading-5 tracking-wide my-5 text-white">
-                  Enter your personal details and start your journey with us
+                  Create your account to start managing your sales and customers easily.
                 </p>
                 <button
                   className="bg-transparent border border-white rounded-lg py-3 px-11 text-xs tracking-wider uppercase transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-[#0F172A]"
