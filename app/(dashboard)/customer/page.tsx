@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import {
-  LuSearch, LuPlus, LuMapPin, LuUser, LuClock,
+  LuSearch, LuPlus, LuMapPin, LuUser,
   LuLayoutGrid, LuList, LuPhone, LuBadgeCheck,
-  LuCalendar, LuArrowLeft, LuZap, LuSave,
-  LuChevronDown, LuBuilding2, LuFileText,
-  LuMail, LuHash, LuCompass, LuSun,
-  LuWifi, LuShieldCheck, LuWallet, LuFlame,
+  LuArrowLeft, LuZap, LuSave,
+  LuChevronDown, LuBuilding2,
 } from "react-icons/lu";
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -30,117 +28,17 @@ function StatusBadge({ status }: { status: string }) {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Customer = {
-  id: number;
-  workno: string;
-  sitename: string;
-  customername: string;
-  email: string;
-  tel: string;
-  companyname: string;
-  juristicid: string;
-  taxpayerno: string;
-  businesstype: string;
-  date: string;
-  address: string;
-  latitude: string;
-  longitude: string;
-  buildingtype: string;
-  buildingfloor: string;
-  rooftype: string;
-  roofage: string;
-  roofslope: string;
-  roofdirection: string;
-  roofarea: string;
-  shadow: string;
-  groundwire: boolean;
-  internetservice: string;
-  authority: string;
-  auserno: string;
-  avgbill: string;
-  avgaunit: string;
-  highusetime: string;
-  past_abill: string;
-  created_at: string;
-  sale: string;
-  status: string;
+  id: number; workno: string; sitename: string; customername: string;
+  email: string; tel: string; companyname: string; juristicid: string;
+  taxpayerno: string; businesstype: string; date: string; address: string;
+  latitude: string; longitude: string; buildingtype: string; buildingfloor: string;
+  rooftype: string; roofage: string; roofslope: string; roofdirection: string;
+  roofarea: string; shadow: string; groundwire: boolean; internetservice: string;
+  authority: string; auserno: string; avgbill: string; avgaunit: string;
+  highusetime: string; past_abill: string; created_at: string; sale: string; status: string;
 };
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-const initialCustomers: Customer[] = [
-  {
-    id: 1, workno: "AT-2026-001", sitename: "Phawat Residence",
-    customername: "Phawat Srivichai (Film)", email: "phawat@example.com", tel: "081-234-5678",
-    companyname: "—", juristicid: "—", taxpayerno: "1-1007-00123-45-6",
-    businesstype: "Residential", date: "24 Jan 2026", address: "123 Moo 4, Bang Khun Thian, Bangkok 10150",
-    latitude: "13.6522", longitude: "100.4342", buildingtype: "Single House",
-    buildingfloor: "2", rooftype: "Metal Sheet", roofage: "5", roofslope: "15",
-    roofdirection: "South", roofarea: "80", shadow: "Low", groundwire: true,
-    internetservice: "AIS Fibre", authority: "MEA", auserno: "MEA-001234",
-    avgbill: "3500", avgaunit: "450", highusetime: "10:00–14:00",
-    past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Baitoey", status: "Survey",
-  },
-  {
-    id: 2, workno: "AT-2026-002", sitename: "F&B Factory Chonburi",
-    customername: "Food and Beverage Co.", email: "fnb@factory.co.th", tel: "089-876-5432",
-    companyname: "Food and Beverage Co., Ltd.", juristicid: "0-1055-60123-45-6", taxpayerno: "0-1055-60123-45-6",
-    businesstype: "Factory", date: "24 Jan 2026", address: "456 Industrial Estate, Chonburi 20000",
-    latitude: "13.3611", longitude: "100.9847", buildingtype: "Factory",
-    buildingfloor: "1", rooftype: "Galvanised Steel", roofage: "8", roofslope: "10",
-    roofdirection: "South-West", roofarea: "600", shadow: "None", groundwire: true,
-    internetservice: "True Business", authority: "PEA", auserno: "PEA-009876",
-    avgbill: "85000", avgaunit: "12000", highusetime: "08:00–17:00",
-    past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Baitoey", status: "Installation",
-  },
-  {
-    id: 3, workno: "AT-2026-003", sitename: "Chocolate Factory Rayong",
-    customername: "Chocolate Factory", email: "ops@chocfactory.th", tel: "062-345-6789",
-    companyname: "Choc Factory Thailand Co., Ltd.", juristicid: "0-2155-45678-90-1", taxpayerno: "0-2155-45678-90-1",
-    businesstype: "Factory", date: "24 Jan 2026", address: "789 Rayong Industrial Park, Rayong 21000",
-    latitude: "12.6814", longitude: "101.2816", buildingtype: "Factory",
-    buildingfloor: "1", rooftype: "Concrete", roofage: "12", roofslope: "5",
-    roofdirection: "South", roofarea: "1200", shadow: "Low", groundwire: true,
-    internetservice: "NT Business", authority: "PEA", auserno: "PEA-112233",
-    avgbill: "150000", avgaunit: "22000", highusetime: "07:00–18:00",
-    past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Bank", status: "Approved",
-  },
-  {
-    id: 4, workno: "AT-2026-004", sitename: "Korapin Residence",
-    customername: "Korapin", email: "korapin@gmail.com", tel: "091-567-8901",
-    companyname: "—", juristicid: "—", taxpayerno: "1-1007-09900-45-6",
-    businesstype: "Residential", date: "24 Jan 2026", address: "22 Bang Khun Thian Soi 5, Bangkok 10150",
-    latitude: "13.6418", longitude: "100.4512", buildingtype: "Townhouse",
-    buildingfloor: "3", rooftype: "Clay Tile", roofage: "3", roofslope: "25",
-    roofdirection: "South-East", roofarea: "45", shadow: "Medium", groundwire: false,
-    internetservice: "DTAC Home", authority: "MEA", auserno: "MEA-034567",
-    avgbill: "2800", avgaunit: "360", highusetime: "11:00–15:00",
-    past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Junjao", status: "Approved",
-  },
-  {
-    id: 5, workno: "AT-2026-005", sitename: "Yak Kin Salmon Restaurant",
-    customername: "Yak Kin Salmon", email: "info@yakkin.com", tel: "083-901-2345",
-    companyname: "Yak Kin Salmon Co., Ltd.", juristicid: "0-1055-65501-00-2", taxpayerno: "0-1055-65501-00-2",
-    businesstype: "Restaurant", date: "24 Jan 2026", address: "5/10 Thung Kru, Bangkok 10140",
-    latitude: "13.6901", longitude: "100.4985", buildingtype: "Commercial",
-    buildingfloor: "2", rooftype: "Metal Sheet", roofage: "2", roofslope: "12",
-    roofdirection: "South", roofarea: "150", shadow: "Low", groundwire: true,
-    internetservice: "AIS Fibre", authority: "MEA", auserno: "MEA-056789",
-    avgbill: "18000", avgaunit: "2400", highusetime: "10:00–22:00",
-    past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Bank", status: "Quotation",
-  },
-  {
-    id: 6, workno: "AT-2026-006", sitename: "Jojo Banana Shop",
-    customername: "Jojo Banana (Apple)", email: "jojo@banana.co.th", tel: "095-678-1234",
-    companyname: "—", juristicid: "—", taxpayerno: "1-1007-05560-12-3",
-    businesstype: "Residential", date: "24 Jan 2026", address: "88 Bang Khun Thian, Bangkok 10150",
-    latitude: "13.6530", longitude: "100.4370", buildingtype: "Single House",
-    buildingfloor: "1", rooftype: "Metal Sheet", roofage: "1", roofslope: "18",
-    roofdirection: "South-West", roofarea: "60", shadow: "None", groundwire: false,
-    internetservice: "TRUE Move H", authority: "MEA", auserno: "MEA-078901",
-    avgbill: "1900", avgaunit: "240", highusetime: "09:00–13:00",
-    past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Junjao", status: "Survey",
-  },
-];
-
+// ─── Constants ────────────────────────────────────────────────────────────────
 const avatarColors = [
   "from-orange-500 to-orange-700", "from-sky-500 to-sky-700",
   "from-violet-500 to-violet-700", "from-emerald-500 to-emerald-700",
@@ -148,27 +46,69 @@ const avatarColors = [
   "from-teal-500 to-teal-700",     "from-cyan-500 to-cyan-700",
   "from-pink-500 to-pink-700",
 ];
+const statusOptions  = ["Survey", "Quotation", "Approved", "Installation"];
+const saleOptions    = ["Baitoey", "Bank", "Junjao"];
+const businessTypes  = ["Residential", "Factory", "Restaurant", "Commercial", "Hotel", "Office"];
+const roofTypes      = ["Metal Sheet", "Galvanised Steel", "Concrete", "Clay Tile", "CPAC", "Other"];
+const buildingTypes  = ["Single House", "Townhouse", "Factory", "Commercial", "Hotel", "Office"];
+const authorities    = ["MEA", "PEA"];
 
-const statusOptions   = ["Survey", "Quotation", "Approved", "Installation"];
-const saleOptions     = ["Baitoey", "Bank", "Junjao"];
-const businessTypes   = ["Residential", "Factory", "Restaurant", "Commercial", "Hotel", "Office"];
-const roofTypes       = ["Metal Sheet", "Galvanised Steel", "Concrete", "Clay Tile", "CPAC", "Other"];
-const buildingTypes   = ["Single House", "Townhouse", "Factory", "Commercial", "Hotel", "Office"];
-const authorities     = ["MEA", "PEA"];
+const BASE_SELECT = "w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-100 transition-all text-slate-800 appearance-none";
+
+// ─── Mock Data ────────────────────────────────────────────────────────────────
+const initialCustomers: Customer[] = [
+  { id: 1, workno: "AT-2026-001", sitename: "Phawat Residence", customername: "Phawat Srivichai (Film)", email: "phawat@example.com", tel: "081-234-5678", companyname: "—", juristicid: "—", taxpayerno: "1-1007-00123-45-6", businesstype: "Residential", date: "24 Jan 2026", address: "123 Moo 4, Bang Khun Thian, Bangkok 10150", latitude: "13.6522", longitude: "100.4342", buildingtype: "Single House", buildingfloor: "2", rooftype: "Metal Sheet", roofage: "5", roofslope: "15", roofdirection: "South", roofarea: "80", shadow: "Low", groundwire: true, internetservice: "AIS Fibre", authority: "MEA", auserno: "MEA-001234", avgbill: "3500", avgaunit: "450", highusetime: "10:00–14:00", past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Baitoey", status: "Survey" },
+  { id: 2, workno: "AT-2026-002", sitename: "F&B Factory Chonburi", customername: "Food and Beverage", email: "fnb@factory.co.th", tel: "089-876-5432", companyname: "Food and Beverage Co., Ltd.", juristicid: "0-1055-60123-45-6", taxpayerno: "0-1055-60123-45-6", businesstype: "Factory", date: "24 Jan 2026", address: "456 Industrial Estate, Chonburi 20000", latitude: "13.3611", longitude: "100.9847", buildingtype: "Factory", buildingfloor: "1", rooftype: "Galvanised Steel", roofage: "8", roofslope: "10", roofdirection: "South-West", roofarea: "600", shadow: "None", groundwire: true, internetservice: "True Business", authority: "PEA", auserno: "PEA-009876", avgbill: "85000", avgaunit: "12000", highusetime: "08:00–17:00", past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Baitoey", status: "Installation" },
+  { id: 3, workno: "AT-2026-003", sitename: "Chocolate Factory Rayong", customername: "Chocolate Factory", email: "ops@chocfactory.th", tel: "062-345-6789", companyname: "Choc Factory Thailand Co., Ltd.", juristicid: "0-2155-45678-90-1", taxpayerno: "0-2155-45678-90-1", businesstype: "Factory", date: "24 Jan 2026", address: "789 Rayong Industrial Park, Rayong 21000", latitude: "12.6814", longitude: "101.2816", buildingtype: "Factory", buildingfloor: "1", rooftype: "Concrete", roofage: "12", roofslope: "5", roofdirection: "South", roofarea: "1200", shadow: "Low", groundwire: true, internetservice: "NT Business", authority: "PEA", auserno: "PEA-112233", avgbill: "150000", avgaunit: "22000", highusetime: "07:00–18:00", past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Bank", status: "Approved" },
+  { id: 4, workno: "AT-2026-004", sitename: "Korapin Residence", customername: "Korapin", email: "korapin@gmail.com", tel: "091-567-8901", companyname: "—", juristicid: "—", taxpayerno: "1-1007-09900-45-6", businesstype: "Residential", date: "24 Jan 2026", address: "22 Bang Khun Thian Soi 5, Bangkok 10150", latitude: "13.6418", longitude: "100.4512", buildingtype: "Townhouse", buildingfloor: "3", rooftype: "Clay Tile", roofage: "3", roofslope: "25", roofdirection: "South-East", roofarea: "45", shadow: "Medium", groundwire: false, internetservice: "DTAC Home", authority: "MEA", auserno: "MEA-034567", avgbill: "2800", avgaunit: "360", highusetime: "11:00–15:00", past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Junjao", status: "Approved" },
+  { id: 5, workno: "AT-2026-005", sitename: "Yak Kin Salmon Restaurant", customername: "Yak Kin Salmon", email: "info@yakkin.com", tel: "083-901-2345", companyname: "Yak Kin Salmon Co., Ltd.", juristicid: "0-1055-65501-00-2", taxpayerno: "0-1055-65501-00-2", businesstype: "Restaurant", date: "24 Jan 2026", address: "5/10 Thung Kru, Bangkok 10140", latitude: "13.6901", longitude: "100.4985", buildingtype: "Commercial", buildingfloor: "2", rooftype: "Metal Sheet", roofage: "2", roofslope: "12", roofdirection: "South", roofarea: "150", shadow: "Low", groundwire: true, internetservice: "AIS Fibre", authority: "MEA", auserno: "MEA-056789", avgbill: "18000", avgaunit: "2400", highusetime: "10:00–22:00", past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Bank", status: "Quotation" },
+  { id: 6, workno: "AT-2026-006", sitename: "Jojo Banana Shop", customername: "Jojo Banana (Apple)", email: "jojo@banana.co.th", tel: "095-678-1234", companyname: "—", juristicid: "—", taxpayerno: "1-1007-05560-12-3", businesstype: "Residential", date: "24 Jan 2026", address: "88 Bang Khun Thian, Bangkok 10150", latitude: "13.6530", longitude: "100.4370", buildingtype: "Single House", buildingfloor: "1", rooftype: "Metal Sheet", roofage: "1", roofslope: "18", roofdirection: "South-West", roofarea: "60", shadow: "None", groundwire: false, internetservice: "TRUE Move H", authority: "MEA", auserno: "MEA-078901", avgbill: "1900", avgaunit: "240", highusetime: "09:00–13:00", past_abill: "Dec 2025", created_at: "24 Jan 2026", sale: "Junjao", status: "Survey" },
+];
 
 type View = "list" | "detail" | "add";
 
-// ─── Section wrapper ──────────────────────────────────────────────────────────
-function Section({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
+// ─── Module-level helper components (must NOT be inside other components) ─────
+
+function FieldGroup({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
+  return (
+    <div>
+      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+        {label}{required && <span className="text-red-400 ml-0.5">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function SelectWrap({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative">
+      {children}
+      <LuChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+    </div>
+  );
+}
+
+function FormSection({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
+  return (
+    <div className="pt-6 first:pt-0">
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+        <Icon size={15} className="text-orange-600" />
+        <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">{title}</h3>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
+    </div>
+  );
+}
+
+function DetailSection({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
         <Icon size={15} className="text-orange-600" />
         <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">{title}</h3>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-        {children}
-      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">{children}</div>
     </div>
   );
 }
@@ -183,25 +123,30 @@ function InfoRow({ label, value }: { label: string; value: string | boolean }) {
   );
 }
 
-// ─── Detail View (full-screen) ────────────────────────────────────────────────
+// ─── Back Header (shared by Detail and Add) ───────────────────────────────────
+function BackHeader({ label, onBack }: { label: string; onBack: () => void }) {
+  return (
+    <div className="flex items-center gap-3 mb-8">
+      <button
+        onClick={onBack}
+        className="w-9 h-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm shrink-0"
+      >
+        <LuArrowLeft size={18} />
+      </button>
+      <div>
+        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Customers</p>
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">{label}</h1>
+      </div>
+    </div>
+  );
+}
+
+// ─── Detail View ──────────────────────────────────────────────────────────────
 function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () => void }) {
   const grad = avatarColors[(customer.id - 1) % avatarColors.length];
-
   return (
     <div className="p-6 md:p-8 animate-in fade-in duration-300 max-w-7xl mx-auto">
-      {/* Back header */}
-      <div className="flex items-center gap-3 mb-8">
-        <button
-          onClick={onBack}
-          className="w-9 h-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm shrink-0"
-        >
-          <LuArrowLeft size={18} />
-        </button>
-        <div>
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Customers</p>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">Customer Detail</h1>
-        </div>
-      </div>
+      <BackHeader label="Customer Detail" onBack={onBack} />
 
       {/* Profile strip */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 pb-8 border-b border-slate-200">
@@ -215,23 +160,19 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
         <StatusBadge status={customer.status} />
       </div>
 
-      {/* Sections */}
       <div className="space-y-8">
-
-        {/* Contact */}
-        <Section title="Contact Information" icon={LuUser}>
-          <InfoRow label="Email"       value={customer.email} />
-          <InfoRow label="Phone"       value={customer.tel} />
-          <InfoRow label="Company"     value={customer.companyname} />
-          <InfoRow label="Business Type" value={customer.businesstype} />
-          <InfoRow label="Juristic ID" value={customer.juristicid} />
-          <InfoRow label="Tax Payer No." value={customer.taxpayerno} />
-        </Section>
+        <DetailSection title="Contact Information" icon={LuUser}>
+          <InfoRow label="Email"          value={customer.email} />
+          <InfoRow label="Phone"          value={customer.tel} />
+          <InfoRow label="Company"        value={customer.companyname} />
+          <InfoRow label="Business Type"  value={customer.businesstype} />
+          <InfoRow label="Juristic ID"    value={customer.juristicid} />
+          <InfoRow label="Tax Payer No."  value={customer.taxpayerno} />
+        </DetailSection>
 
         <div className="border-t border-slate-100" />
 
-        {/* Site */}
-        <Section title="Site Information" icon={LuMapPin}>
+        <DetailSection title="Site Information" icon={LuMapPin}>
           <div className="sm:col-span-2">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Address</p>
             <p className="text-sm font-semibold text-slate-800 mt-0.5">{customer.address}</p>
@@ -240,12 +181,11 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
           <InfoRow label="Longitude" value={customer.longitude} />
           <InfoRow label="Date"      value={customer.date} />
           <InfoRow label="Sale"      value={customer.sale} />
-        </Section>
+        </DetailSection>
 
         <div className="border-t border-slate-100" />
 
-        {/* Building */}
-        <Section title="Building & Roof" icon={LuBuilding2}>
+        <DetailSection title="Building & Roof" icon={LuBuilding2}>
           <InfoRow label="Building Type"   value={customer.buildingtype} />
           <InfoRow label="Building Floors" value={customer.buildingfloor} />
           <InfoRow label="Roof Type"       value={customer.rooftype} />
@@ -255,21 +195,19 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
           <InfoRow label="Roof Area (m²)"  value={customer.roofarea} />
           <InfoRow label="Shadow"          value={customer.shadow} />
           <InfoRow label="Ground Wire"     value={customer.groundwire} />
-        </Section>
+        </DetailSection>
 
         <div className="border-t border-slate-100" />
 
-        {/* Electrical */}
-        <Section title="Electrical & Utility" icon={LuZap}>
-          <InfoRow label="Authority"         value={customer.authority} />
-          <InfoRow label="Authority User No." value={customer.auserno} />
-          <InfoRow label="Internet Service"  value={customer.internetservice} />
-          <InfoRow label="Avg. Bill (฿)"     value={customer.avgbill} />
-          <InfoRow label="Avg. Units (kWh)"  value={customer.avgaunit} />
-          <InfoRow label="High-use Time"     value={customer.highusetime} />
-          <InfoRow label="Past Bill Date"    value={customer.past_abill} />
-        </Section>
-
+        <DetailSection title="Electrical & Utility" icon={LuZap}>
+          <InfoRow label="Authority"           value={customer.authority} />
+          <InfoRow label="Authority User No."  value={customer.auserno} />
+          <InfoRow label="Internet Service"    value={customer.internetservice} />
+          <InfoRow label="Avg. Bill (฿)"       value={customer.avgbill} />
+          <InfoRow label="Avg. Units (kWh)"    value={customer.avgaunit} />
+          <InfoRow label="High-use Time"       value={customer.highusetime} />
+          <InfoRow label="Past Bill Date"      value={customer.past_abill} />
+        </DetailSection>
       </div>
     </div>
   );
@@ -277,18 +215,22 @@ function CustomerDetail({ customer, onBack }: { customer: Customer; onBack: () =
 
 // ─── Add Customer View ────────────────────────────────────────────────────────
 function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Customer) => void }) {
-  const empty = {
+  const emptyForm = {
     workno: "", sitename: "", customername: "", email: "", tel: "",
-    companyname: "", juristicid: "", taxpayerno: "", businesstype: businessTypes[0],
-    address: "", latitude: "", longitude: "", buildingtype: buildingTypes[0],
-    buildingfloor: "", rooftype: roofTypes[0], roofage: "", roofslope: "",
-    roofdirection: "", roofarea: "", shadow: "", groundwire: false,
-    internetservice: "", authority: authorities[0], auserno: "", avgbill: "",
-    avgaunit: "", highusetime: "", past_abill: "",
+    companyname: "", juristicid: "", taxpayerno: "",
+    businesstype: businessTypes[0], address: "", latitude: "", longitude: "",
+    buildingtype: buildingTypes[0], buildingfloor: "", rooftype: roofTypes[0],
+    roofage: "", roofslope: "", roofdirection: "", roofarea: "", shadow: "",
+    groundwire: false, internetservice: "", authority: authorities[0],
+    auserno: "", avgbill: "", avgaunit: "", highusetime: "", past_abill: "",
     sale: saleOptions[0], status: statusOptions[0],
   };
-  const [form, setForm] = useState<Omit<Customer, "id" | "date" | "created_at">>(empty as unknown as Omit<Customer, "id" | "date" | "created_at">);
+
+  const [form, setForm]     = useState(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
+
+  const inputCls = (field: string) =>
+    `w-full px-3 py-2.5 text-sm bg-slate-50 border rounded-lg focus:outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-100 transition-all text-slate-800 placeholder:text-slate-400 ${errors[field] ? "border-red-400" : "border-slate-200"}`;
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value, type } = e.target;
@@ -313,56 +255,11 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
     onSave({ ...form, id: Date.now(), date: now, created_at: now } as Customer);
   }
 
-  const inputCls = (field: string) =>
-    `w-full px-3 py-2.5 text-sm bg-slate-50 border rounded-lg focus:outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-100 transition-all text-slate-800 placeholder:text-slate-400 ${errors[field] ? "border-red-400" : "border-slate-200"}`;
-
-  const selectCls = `w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-100 transition-all text-slate-800 appearance-none`;
-
-  function FieldGroup({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
-    return (
-      <div>
-        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-          {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-        </label>
-        {children}
-      </div>
-    );
-  }
-
-  function SelectWrap({ children }: { children: React.ReactNode }) {
-    return (
-      <div className="relative">
-        {children}
-        <LuChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-      </div>
-    );
-  }
-
-  function FormSection({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
-    return (
-      <div className="pt-6 first:pt-0">
-        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-          <Icon size={15} className="text-orange-600" />
-          <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">{title}</h3>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-6 md:p-8 animate-in fade-in duration-300 max-w-7xl mx-auto">
-      <div className="flex items-center gap-3 mb-8">
-        <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm shrink-0">
-          <LuArrowLeft size={18} />
-        </button>
-        <div>
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Customers</p>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">Add Customer</h1>
-        </div>
-      </div>
+      <BackHeader label="Add Customer" onBack={onBack} />
 
-      <form onSubmit={handleSubmit} className="space-y-0 max-w-3xl">
+      <form onSubmit={handleSubmit} className="max-w-3xl space-y-0">
 
         <FormSection title="Basic Information" icon={LuUser}>
           <FieldGroup label="Customer Name" required>
@@ -384,7 +281,7 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
           </FieldGroup>
           <FieldGroup label="Business Type">
             <SelectWrap>
-              <select name="businesstype" value={form.businesstype} onChange={handleChange} className={selectCls}>
+              <select name="businesstype" value={form.businesstype} onChange={handleChange} className={BASE_SELECT}>
                 {businessTypes.map((b) => <option key={b}>{b}</option>)}
               </select>
             </SelectWrap>
@@ -400,14 +297,14 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
           </FieldGroup>
           <FieldGroup label="Sale">
             <SelectWrap>
-              <select name="sale" value={form.sale} onChange={handleChange} className={selectCls}>
+              <select name="sale" value={form.sale} onChange={handleChange} className={BASE_SELECT}>
                 {saleOptions.map((s) => <option key={s}>{s}</option>)}
               </select>
             </SelectWrap>
           </FieldGroup>
           <FieldGroup label="Status">
             <SelectWrap>
-              <select name="status" value={form.status} onChange={handleChange} className={selectCls}>
+              <select name="status" value={form.status} onChange={handleChange} className={BASE_SELECT}>
                 {statusOptions.map((s) => <option key={s}>{s}</option>)}
               </select>
             </SelectWrap>
@@ -432,7 +329,7 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
         <FormSection title="Building & Roof" icon={LuBuilding2}>
           <FieldGroup label="Building Type">
             <SelectWrap>
-              <select name="buildingtype" value={form.buildingtype} onChange={handleChange} className={selectCls}>
+              <select name="buildingtype" value={form.buildingtype} onChange={handleChange} className={BASE_SELECT}>
                 {buildingTypes.map((b) => <option key={b}>{b}</option>)}
               </select>
             </SelectWrap>
@@ -442,7 +339,7 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
           </FieldGroup>
           <FieldGroup label="Roof Type">
             <SelectWrap>
-              <select name="rooftype" value={form.rooftype} onChange={handleChange} className={selectCls}>
+              <select name="rooftype" value={form.rooftype} onChange={handleChange} className={BASE_SELECT}>
                 {roofTypes.map((r) => <option key={r}>{r}</option>)}
               </select>
             </SelectWrap>
@@ -473,7 +370,7 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
         <FormSection title="Electrical & Utility" icon={LuZap}>
           <FieldGroup label="Authority">
             <SelectWrap>
-              <select name="authority" value={form.authority} onChange={handleChange} className={selectCls}>
+              <select name="authority" value={form.authority} onChange={handleChange} className={BASE_SELECT}>
                 {authorities.map((a) => <option key={a}>{a}</option>)}
               </select>
             </SelectWrap>
@@ -498,7 +395,6 @@ function AddCustomer({ onBack, onSave }: { onBack: () => void; onSave: (c: Custo
           </FieldGroup>
         </FormSection>
 
-        {/* Submit */}
         <div className="flex gap-3 pt-8">
           <button type="button" onClick={onBack} className="flex-1 py-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
             Cancel
@@ -517,17 +413,12 @@ function CustomerList({ customers, onSelect, onAdd }: { customers: Customer[]; o
   const [search, setSearch]     = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
+  const s = (v?: string) => (v ?? "").toLowerCase();
   const filtered = customers.filter((c) => {
     const q = search.toLowerCase();
-    const s = (v?: string) => (v ?? "").toLowerCase();
-    return (
-      s(c.customername).includes(q) ||
-      s(c.sitename).includes(q) ||
-      s(c.address).includes(q) ||
-      s(c.sale).includes(q) ||
-      s(c.status).includes(q) ||
-      s(c.workno).includes(q)
-    );
+    return s(c.customername).includes(q) || s(c.sitename).includes(q) ||
+           s(c.address).includes(q) || s(c.sale).includes(q) ||
+           s(c.status).includes(q)  || s(c.workno).includes(q);
   });
 
   return (
@@ -566,7 +457,7 @@ function CustomerList({ customers, onSelect, onAdd }: { customers: Customer[]; o
         Showing <span className="text-slate-800">{filtered.length}</span> of <span className="text-slate-800">{customers.length}</span> customers
       </p>
 
-      {/* ── Card View ─────────────────────────────────────────────── */}
+      {/* Card View */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.length === 0 ? (
@@ -605,16 +496,15 @@ function CustomerList({ customers, onSelect, onAdd }: { customers: Customer[]; o
         </div>
       )}
 
-      {/* ── List View ─────────────────────────────────────────────── */}
+      {/* List View */}
       {viewMode === "list" && (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          {/* Desktop header */}
           <div className="hidden md:flex items-center px-6 py-3.5 border-b border-slate-200 bg-slate-50 gap-4">
             <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest w-[200px] shrink-0">Customer</p>
-            <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest w-[100px] shrink-0">Work No.</p>
+            <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest w-[110px] shrink-0">Work No.</p>
             <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest flex-1">Address</p>
             <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest w-[90px] shrink-0">Sale</p>
-            <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest w-[110px] shrink-0">Status</p>
+            <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest w-[120px] shrink-0">Status</p>
           </div>
 
           {filtered.length === 0 ? (
@@ -625,10 +515,8 @@ function CustomerList({ customers, onSelect, onAdd }: { customers: Customer[]; o
           ) : (
             <div className="divide-y divide-slate-100">
               {filtered.map((c) => (
-                <div key={c.id} onClick={() => onSelect(c)}
-                  className="cursor-pointer group hover:bg-slate-50 transition-colors"
-                >
-                  {/* ── Mobile layout ── */}
+                <div key={c.id} onClick={() => onSelect(c)} className="cursor-pointer group hover:bg-slate-50 transition-colors">
+                  {/* Mobile */}
                   <div className="md:hidden flex items-center gap-3 px-4 py-3.5">
                     <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColors[(c.id - 1) % avatarColors.length]} flex items-center justify-center text-white font-black text-xs shadow-md shrink-0`}>
                       {c.customername[0]}
@@ -641,8 +529,7 @@ function CustomerList({ customers, onSelect, onAdd }: { customers: Customer[]; o
                       <p className="text-xs text-slate-500 truncate mt-0.5">{c.tel} · {c.sale}</p>
                     </div>
                   </div>
-
-                  {/* ── Desktop layout ── */}
+                  {/* Desktop */}
                   <div className="hidden md:flex items-center gap-4 px-6 py-4">
                     <div className="flex items-center gap-3 w-[200px] shrink-0">
                       <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${avatarColors[(c.id - 1) % avatarColors.length]} flex items-center justify-center text-white font-black text-xs shadow-md shrink-0`}>
@@ -653,12 +540,12 @@ function CustomerList({ customers, onSelect, onAdd }: { customers: Customer[]; o
                         <p className="text-xs text-slate-400 truncate">{c.sitename}</p>
                       </div>
                     </div>
-                    <p className="text-xs font-mono text-slate-500 w-[100px] shrink-0">{c.workno}</p>
+                    <p className="text-xs font-mono text-slate-500 w-[110px] shrink-0">{c.workno}</p>
                     <p className="text-sm text-slate-500 flex-1 truncate">{c.address}</p>
                     <div className="flex items-center gap-1 text-sm font-semibold text-slate-800 w-[90px] shrink-0">
                       <LuBadgeCheck size={13} className="text-orange-600 shrink-0" />{c.sale}
                     </div>
-                    <div className="w-[110px] shrink-0"><StatusBadge status={c.status} /></div>
+                    <div className="w-[120px] shrink-0"><StatusBadge status={c.status} /></div>
                   </div>
                 </div>
               ))}
@@ -682,7 +569,15 @@ export default function CustomerPage() {
   const [view, setView]           = useState<View>("list");
   const [selected, setSelected]   = useState<Customer | null>(null);
 
-  if (view === "detail" && selected) return <CustomerDetail customer={selected} onBack={() => { setSelected(null); setView("list"); }} />;
-  if (view === "add")               return <AddCustomer onBack={() => setView("list")} onSave={(c) => { setCustomers((p) => [...p, c]); setView("list"); }} />;
-  return <CustomerList customers={customers} onSelect={(c) => { setSelected(c); setView("detail"); }} onAdd={() => setView("add")} />;
+  if (view === "detail" && selected)
+    return <CustomerDetail customer={selected} onBack={() => { setSelected(null); setView("list"); }} />;
+  if (view === "add")
+    return <AddCustomer onBack={() => setView("list")} onSave={(c) => { setCustomers((p) => [...p, c]); setView("list"); }} />;
+  return (
+    <CustomerList
+      customers={customers}
+      onSelect={(c) => { setSelected(c); setView("detail"); }}
+      onAdd={() => setView("add")}
+    />
+  );
 }

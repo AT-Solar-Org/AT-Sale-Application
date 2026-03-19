@@ -2,43 +2,20 @@
 
 import { useState, useEffect } from "react";
 import {
-  LuSearch,
-  LuEye,
-  LuCircleCheck,
-  LuCircleX,
-  LuClock,
-  LuCalendar,
-  LuX,
-  LuUser,
-  LuMail,
-  LuPhone,
-  LuCreditCard,
-  LuLandmark,
-  LuChevronDown,
-  LuCircleAlert,
-  LuPencil,
-  LuFileText,
-  LuShieldCheck,
-  LuMaximize2,
+  LuSearch, LuEye, LuCircleCheck, LuCircleX, LuClock,
+  LuCalendar, LuX, LuUser, LuMail, LuPhone,
+  LuCreditCard, LuLandmark, LuChevronDown, LuCircleAlert,
+  LuPencil, LuFileText, LuShieldCheck, LuMaximize2,
 } from "react-icons/lu";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type StatusType = "Pending" | "Approved" | "Rejected";
 
 interface SaleRequest {
-  id: string;
-  email: string;
-  name: string;
-  surname: string;
-  phone: string;
-  nationalId: string;
-  bankAccount: string;
-  idCardData: string;
-  idCardName: string;
-  idCardType: string;
-  requestDate: string;
-  status: StatusType;
-  note?: string;
+  id: string; email: string; name: string; surname: string;
+  phone: string; nationalId: string; bankAccount: string;
+  idCardData: string; idCardName: string; idCardType: string;
+  requestDate: string; status: StatusType; note?: string;
 }
 
 // ─── Mock fallback ────────────────────────────────────────────────────────────
@@ -52,20 +29,18 @@ const MOCK_REQUESTS: SaleRequest[] = [
   { id: "req_7", email: "thanawat.b@pvthai.com",       name: "Thanawat", surname: "Boonsri",   phone: "0864321098", nationalId: "3100200789012", bankAccount: "2468013579", idCardData: "", idCardName: "id_thanawat.pdf", idCardType: "application/pdf", requestDate: "18 Feb 2026", status: "Rejected", note: "Incomplete documentation" },
 ];
 
-// ─── Sort: Pending → Rejected → Approved, ascending date within each group ───
+// ─── Sort ─────────────────────────────────────────────────────────────────────
 const STATUS_ORDER: Record<StatusType, number> = { Pending: 0, Rejected: 1, Approved: 2 };
 
 function parseDate(str: string): number {
-  // Handles "28 Feb 2026" or similar
   const d = new Date(str);
   return isNaN(d.getTime()) ? 0 : d.getTime();
 }
 
 function sortRequests(list: SaleRequest[]): SaleRequest[] {
   return [...list].sort((a, b) => {
-    const statusDiff = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
-    if (statusDiff !== 0) return statusDiff;
-    return parseDate(a.requestDate) - parseDate(b.requestDate); // ascending date
+    const sd = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
+    return sd !== 0 ? sd : parseDate(a.requestDate) - parseDate(b.requestDate);
   });
 }
 
@@ -83,9 +58,7 @@ const avatarColors = [
   "from-teal-500 to-teal-700",
 ];
 
-function getInitials(name: string, surname: string) {
-  return `${name[0] ?? ""}${surname[0] ?? ""}`.toUpperCase();
-}
+function getInitials(name: string, surname: string) { return `${name[0] ?? ""}${surname[0] ?? ""}`.toUpperCase(); }
 function getColor(id: string) {
   const idx = id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   return avatarColors[idx % avatarColors.length];
@@ -104,11 +77,8 @@ function FilterDropdown({ value, onChange }: { value: StatusType | "All"; onChan
   const current = filterOptions.find((o) => o.value === value)!;
   return (
     <div className="relative">
-      <button
-        onClick={() => setOpen((p) => !p)}
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-semibold transition-all min-w-[145px] justify-between ${
-          open ? "border-[#EA580C] ring-2 ring-orange-100 bg-white text-slate-800" : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300"
-        }`}
+      <button onClick={() => setOpen((p) => !p)}
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-semibold transition-all min-w-[145px] justify-between ${open ? "border-[#EA580C] ring-2 ring-orange-100 bg-white text-slate-800" : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300"}`}
       >
         <div className="flex items-center gap-2">
           {current.dot && <span className={`w-2 h-2 rounded-full ${current.dot} shrink-0`} />}
@@ -122,16 +92,10 @@ function FilterDropdown({ value, onChange }: { value: StatusType | "All"; onChan
           <div className="absolute right-0 top-full mt-2 z-20 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden w-44 animate-in fade-in zoom-in-95 duration-150">
             <div className="p-1.5 space-y-0.5">
               {filterOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => { onChange(opt.value); setOpen(false); }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors text-left ${
-                    value === opt.value ? "bg-orange-50 text-[#EA580C]" : "text-slate-600 hover:bg-slate-50"
-                  }`}
+                <button key={opt.value} onClick={() => { onChange(opt.value); setOpen(false); }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors text-left ${value === opt.value ? "bg-orange-50 text-[#EA580C]" : "text-slate-600 hover:bg-slate-50"}`}
                 >
-                  {opt.dot
-                    ? <span className={`w-2 h-2 rounded-full ${opt.dot} shrink-0`} />
-                    : <span className="w-2 h-2 rounded-full border border-slate-300 shrink-0" />}
+                  {opt.dot ? <span className={`w-2 h-2 rounded-full ${opt.dot} shrink-0`} /> : <span className="w-2 h-2 rounded-full border border-slate-300 shrink-0" />}
                   {opt.label}
                   {value === opt.value && <LuCircleCheck size={14} className="ml-auto text-[#EA580C]" />}
                 </button>
@@ -147,24 +111,12 @@ function FilterDropdown({ value, onChange }: { value: StatusType | "All"; onChan
 // ─── Lightbox ─────────────────────────────────────────────────────────────────
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6 animate-in fade-in duration-150"
-      onClick={onClose}
-    >
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
-      >
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6 animate-in fade-in duration-150" onClick={onClose}>
+      <button onClick={onClose} className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10">
         <LuX size={20} />
       </button>
-      {/* plain img so base64 data URLs render at natural size without next/image domain restrictions */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt="ID Card Full Size"
-        onClick={(e) => e.stopPropagation()}
-        className="max-w-full max-h-[85vh] w-auto h-auto rounded-2xl shadow-2xl object-contain"
-      />
+      <img src={src} alt="ID Card Full Size" onClick={(e) => e.stopPropagation()} className="max-w-full max-h-[85vh] w-auto h-auto rounded-2xl shadow-2xl object-contain" />
     </div>
   );
 }
@@ -188,11 +140,9 @@ function IdCardPreview({ data, name, type }: { data: string; name: string; type:
         <div className="relative w-full h-36 rounded-xl overflow-hidden border border-slate-200 group cursor-pointer" onClick={() => setLightbox(true)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={data} alt="ID Card" className="w-full h-full object-cover" />
-          {/* Expand overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/35 transition-all duration-200">
             <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <LuMaximize2 size={13} />
-              View Full Size
+              <LuMaximize2 size={13} /> View Full Size
             </span>
           </div>
         </div>
@@ -200,13 +150,8 @@ function IdCardPreview({ data, name, type }: { data: string; name: string; type:
     );
   }
 
-  // PDF
   return (
-    <a
-      href={data}
-      download={name}
-      className="flex items-center gap-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 hover:bg-slate-100 transition-colors group"
-    >
+    <a href={data} download={name} className="flex items-center gap-3 w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 hover:bg-slate-100 transition-colors group">
       <LuFileText size={22} className="text-[#EA580C] shrink-0" />
       <div className="min-w-0">
         <p className="text-sm font-semibold text-slate-800 truncate">{name}</p>
@@ -218,10 +163,8 @@ function IdCardPreview({ data, name, type }: { data: string; name: string; type:
 
 // ─── Confirmation Modal ───────────────────────────────────────────────────────
 function ConfirmModal({ request, action, onConfirm, onCancel }: {
-  request: SaleRequest;
-  action: "Approve" | "Reject";
-  onConfirm: (note: string) => void;
-  onCancel: () => void;
+  request: SaleRequest; action: "Approve" | "Reject";
+  onConfirm: (note: string) => void; onCancel: () => void;
 }) {
   const [note, setNote] = useState(action === "Reject" ? "Rejected by admin" : "");
   const isApprove = action === "Approve";
@@ -236,7 +179,6 @@ function ConfirmModal({ request, action, onConfirm, onCancel }: {
           <h3 className="text-lg font-black text-slate-900">{isApprove ? "Approve Account?" : "Reject Account?"}</h3>
           <p className="text-sm text-slate-500 mt-1">{isApprove ? "This will grant access to the system." : "This will deny access to the system."}</p>
         </div>
-
         <div className="px-6 pt-4">
           <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${getColor(request.id)} flex items-center justify-center text-white font-black text-xs shadow-sm shrink-0`}>
@@ -248,27 +190,19 @@ function ConfirmModal({ request, action, onConfirm, onCancel }: {
             </div>
           </div>
         </div>
-
         <div className="px-6 pt-4 pb-2">
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
             {isApprove ? "Note (optional)" : "Reason"}
           </label>
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={3}
+          <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3}
             placeholder={isApprove ? "Add a note..." : "Reason for rejection..."}
             className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:border-[#EA580C] focus:ring-2 focus:ring-orange-100 transition-all resize-none text-slate-700 placeholder:text-slate-300"
           />
         </div>
-
         <div className="px-6 pb-6 flex gap-3">
           <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
-          <button
-            onClick={() => onConfirm(note)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-white text-sm font-bold transition-colors shadow-md ${
-              isApprove ? "bg-[#EA580C] hover:bg-[#c2410c] shadow-orange-200" : "bg-red-500 hover:bg-red-600 shadow-red-200"
-            }`}
+          <button onClick={() => onConfirm(note)}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-white text-sm font-bold transition-colors shadow-md ${isApprove ? "bg-[#EA580C] hover:bg-[#c2410c] shadow-orange-200" : "bg-red-500 hover:bg-red-600 shadow-red-200"}`}
           >
             {isApprove ? <LuCircleCheck size={16} /> : <LuCircleX size={16} />}
             {isApprove ? "Approve" : "Reject"}
@@ -281,13 +215,11 @@ function ConfirmModal({ request, action, onConfirm, onCancel }: {
 
 // ─── Detail / Edit Modal ──────────────────────────────────────────────────────
 function DetailModal({ request, onClose, onAction }: {
-  request: SaleRequest;
-  onClose: () => void;
+  request: SaleRequest; onClose: () => void;
   onAction: (action: "Approve" | "Reject") => void;
 }) {
   const cfg = statusConfig[request.status];
   const isPending = request.status === "Pending";
-
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
@@ -295,8 +227,6 @@ function DetailModal({ request, onClose, onAction }: {
         <button onClick={onClose} className="absolute top-4 right-4 p-1.5 text-slate-400 hover:bg-slate-100 rounded-lg transition-colors z-10">
           <LuX size={18} />
         </button>
-
-        {/* Header */}
         <div className="p-6 pb-4 border-b border-slate-100">
           <div className="flex items-center gap-4">
             <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${getColor(request.id)} flex items-center justify-center text-white font-black text-lg shadow-lg shrink-0`}>
@@ -305,14 +235,11 @@ function DetailModal({ request, onClose, onAction }: {
             <div>
               <h2 className="text-lg font-black text-slate-900">{request.name} {request.surname}</h2>
               <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${cfg.badge} mt-1`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                {request.status}
+                <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{request.status}
               </span>
             </div>
           </div>
         </div>
-
-        {/* Info */}
         <div className="p-6 space-y-3.5">
           {[
             { icon: LuMail,       label: "Email",        value: request.email },
@@ -331,34 +258,24 @@ function DetailModal({ request, onClose, onAction }: {
               </div>
             </div>
           ))}
-
-          {/* ID Card */}
           <div>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">ID Card</p>
             <IdCardPreview data={request.idCardData} name={request.idCardName} type={request.idCardType} />
           </div>
-
-          {/* Note */}
           {request.note && (
             <div className="flex items-start gap-3">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${request.status === "Approved" ? "bg-green-50" : "bg-red-50"}`}>
-                {request.status === "Approved"
-                  ? <LuShieldCheck size={15} className="text-green-500" />
-                  : <LuCircleX size={15} className="text-red-400" />}
+                {request.status === "Approved" ? <LuShieldCheck size={15} className="text-green-500" /> : <LuCircleX size={15} className="text-red-400" />}
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   {request.status === "Approved" ? "Approval Note" : "Rejection Note"}
                 </p>
-                <p className={`text-sm font-medium ${request.status === "Approved" ? "text-green-700" : "text-red-600"}`}>
-                  {request.note}
-                </p>
+                <p className={`text-sm font-medium ${request.status === "Approved" ? "text-green-700" : "text-red-600"}`}>{request.note}</p>
               </div>
             </div>
           )}
         </div>
-
-        {/* Actions */}
         <div className="px-6 pb-6 flex gap-3">
           {isPending ? (
             <>
@@ -394,26 +311,25 @@ function DetailModal({ request, onClose, onAction }: {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function SaleApprovalPage() {
-  const [requests, setRequests]           = useState<SaleRequest[]>([]);
-  const [search, setSearch]               = useState("");
-  const [filterStatus, setFilterStatus]   = useState<StatusType | "All">("All");
-  const [viewRequest, setViewRequest]     = useState<SaleRequest | null>(null);
+  // ── Lazy init: read localStorage once on mount, fall back to mock ──────────
+  const [requests, setRequests] = useState<SaleRequest[]>(() => {
+    if (typeof window === "undefined") return MOCK_REQUESTS;
+    try {
+      const raw = localStorage.getItem("saleApprovalRequests");
+      if (!raw) return MOCK_REQUESTS;
+      const parsed: SaleRequest[] = JSON.parse(raw);
+      return parsed.length > 0 ? parsed : MOCK_REQUESTS;
+    } catch {
+      return MOCK_REQUESTS;
+    }
+  });
+
+  const [search, setSearch]             = useState("");
+  const [filterStatus, setFilterStatus] = useState<StatusType | "All">("All");
+  const [viewRequest, setViewRequest]   = useState<SaleRequest | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<{ request: SaleRequest; action: "Approve" | "Reject" } | null>(null);
 
-  useEffect(() => {
-    const raw = localStorage.getItem("saleApprovalRequests");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setRequests(parsed.length > 0 ? parsed : MOCK_REQUESTS);
-      } catch {
-        setRequests(MOCK_REQUESTS);
-      }
-    } else {
-      setRequests(MOCK_REQUESTS);
-    }
-  }, []);
-
+  // Persist changes to localStorage
   useEffect(() => {
     if (requests.length > 0) {
       localStorage.setItem("saleApprovalRequests", JSON.stringify(requests));
@@ -429,23 +345,17 @@ export default function SaleApprovalPage() {
     if (!confirmTarget) return;
     const { request, action } = confirmTarget;
     setRequests((prev) =>
-      prev.map((r) =>
-        r.id === request.id
-          ? { ...r, status: action === "Approve" ? "Approved" : "Rejected", note: note || undefined }
-          : r
-      )
+      prev.map((r) => r.id === request.id ? { ...r, status: action === "Approve" ? "Approved" : "Rejected", note: note || undefined } : r)
     );
     setConfirmTarget(null);
   };
 
-  // Filter then sort
   const filtered = sortRequests(
     requests.filter((r) => {
       const q = search.toLowerCase();
       const fullName = `${r.name} ${r.surname}`.toLowerCase();
-      const matchSearch = fullName.includes(q) || r.email.toLowerCase().includes(q) || r.phone.includes(q);
-      const matchStatus = filterStatus === "All" || r.status === filterStatus;
-      return matchSearch && matchStatus;
+      return (fullName.includes(q) || r.email.toLowerCase().includes(q) || r.phone.includes(q)) &&
+             (filterStatus === "All" || r.status === filterStatus);
     })
   );
 
@@ -454,19 +364,12 @@ export default function SaleApprovalPage() {
   return (
     <>
       {confirmTarget && (
-        <ConfirmModal
-          request={confirmTarget.request}
-          action={confirmTarget.action}
-          onConfirm={handleConfirm}
-          onCancel={() => setConfirmTarget(null)}
-        />
+        <ConfirmModal request={confirmTarget.request} action={confirmTarget.action}
+          onConfirm={handleConfirm} onCancel={() => setConfirmTarget(null)} />
       )}
       {viewRequest && !confirmTarget && (
-        <DetailModal
-          request={viewRequest}
-          onClose={() => setViewRequest(null)}
-          onAction={(action) => requestAction(viewRequest, action)}
-        />
+        <DetailModal request={viewRequest} onClose={() => setViewRequest(null)}
+          onAction={(action) => requestAction(viewRequest, action)} />
       )}
 
       <div className="p-6 md:p-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
@@ -477,11 +380,8 @@ export default function SaleApprovalPage() {
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">Sale Approval</h1>
             <p className="text-slate-500 text-sm mt-1">Review and manage sales account registration requests</p>
           </div>
-          <button
-            onClick={() => setFilterStatus((p) => (p === "Pending" ? "All" : "Pending"))}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-150 self-start ${
-              filterStatus === "Pending" ? "bg-yellow-50 border-yellow-400 shadow-sm" : "bg-white border-yellow-100 hover:border-yellow-300"
-            }`}
+          <button onClick={() => setFilterStatus((p) => (p === "Pending" ? "All" : "Pending"))}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-150 self-start ${filterStatus === "Pending" ? "bg-yellow-50 border-yellow-400 shadow-sm" : "bg-white border-yellow-100 hover:border-yellow-300"}`}
           >
             <LuClock size={15} className="text-yellow-600 shrink-0" />
             <span className="text-xl font-black text-yellow-600 leading-none">{pendingCount}</span>
@@ -493,10 +393,7 @@ export default function SaleApprovalPage() {
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 mb-6 flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, email, or phone..."
               className="w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#EA580C] focus:ring-2 focus:ring-orange-100 transition-all"
             />
@@ -523,12 +420,10 @@ export default function SaleApprovalPage() {
           ) : (
             <div className="divide-y divide-slate-100">
               {filtered.map((req) => {
-                const cfg       = statusConfig[req.status];
+                const cfg = statusConfig[req.status];
                 const isPending = req.status === "Pending";
                 return (
                   <div key={req.id} className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 px-6 py-4 hover:bg-slate-50/70 transition-colors">
-
-                    {/* Applicant */}
                     <div className="flex items-center gap-3 w-full md:w-[220px] md:shrink-0">
                       <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${getColor(req.id)} flex items-center justify-center text-white font-black text-xs shadow-md shrink-0`}>
                         {getInitials(req.name, req.surname)}
@@ -538,51 +433,33 @@ export default function SaleApprovalPage() {
                         <p className="text-xs text-slate-400 truncate">{req.email}</p>
                       </div>
                     </div>
-
-                    {/* Phone */}
                     <div className="flex items-center gap-1.5 text-sm text-slate-600 md:w-[140px] md:shrink-0">
-                      <LuPhone size={13} className="text-slate-400 shrink-0" />
-                      {req.phone}
+                      <LuPhone size={13} className="text-slate-400 shrink-0" />{req.phone}
                     </div>
-
-                    {/* National ID */}
                     <div className="flex items-center gap-1.5 text-sm text-slate-600 flex-1 min-w-0">
                       <LuCreditCard size={13} className="text-slate-400 shrink-0" />
                       <span className="font-mono tracking-wider">{req.nationalId}</span>
                     </div>
-
-                    {/* Date */}
                     <div className="flex items-center gap-1.5 text-sm text-slate-500 md:w-[130px] md:shrink-0">
-                      <LuCalendar size={13} className="text-slate-400 shrink-0" />
-                      {req.requestDate}
+                      <LuCalendar size={13} className="text-slate-400 shrink-0" />{req.requestDate}
                     </div>
-
-                    {/* Status */}
                     <div className="md:w-[100px] md:shrink-0">
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${cfg.badge}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                        {req.status}
+                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{req.status}
                       </span>
                     </div>
-
-                    {/* Actions */}
                     <div className="flex items-center justify-end gap-1 md:w-[116px] md:shrink-0">
-                      <button
-                        onClick={() => setViewRequest(req)}
-                        className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors ${
-                          !isPending ? "text-[#EA580C] hover:bg-orange-50" : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                        }`}
+                      <button onClick={() => setViewRequest(req)}
+                        className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors ${!isPending ? "text-[#EA580C] hover:bg-orange-50" : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"}`}
                         title={isPending ? "View" : "Edit decision"}
                       >
                         {isPending ? <LuEye size={17} /> : <LuPencil size={15} />}
                       </button>
-
                       {isPending ? (
                         <button onClick={() => requestAction(req, "Approve")} className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-green-50 hover:text-green-600 transition-colors" title="Approve">
                           <LuCircleCheck size={17} />
                         </button>
                       ) : <span className="w-9 h-9 shrink-0" />}
-
                       {isPending ? (
                         <button onClick={() => requestAction(req, "Reject")} className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors" title="Reject">
                           <LuCircleX size={17} />
