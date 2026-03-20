@@ -39,16 +39,7 @@ export default function SignUpMore() {
       return;
     }
 
-    async function checkUser() {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        router.push("/auth");
-        return;
-      }
-      setForm((prev) => ({ ...prev, email: userData.user.email ?? "" }));
-    }
-
-    checkUser();
+    router.push("/auth");
   }, []);
 
   // Validate a single field
@@ -151,6 +142,18 @@ export default function SignUpMore() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/callback`,
+        data: {
+          pending_profile: {
+            fullname: `${form.name} ${form.surname}`,
+            email: form.email,
+            phonenumber: form.phone,
+            idcardnumber: form.nationalId,
+            bank_account_no: form.bankAccount,
+            status: "pending",
+            role: "sale",
+            is_approved: false,
+          },
+        },
       },
     });
  
@@ -167,19 +170,8 @@ export default function SignUpMore() {
       router.push("/auth");
       return;
     }
-
-    localStorage.setItem("pendingProfileData", JSON.stringify({
-      fullname: `${form.name} ${form.surname}`,
-      email: form.email,
-      phonenumber: form.phone,
-      idcardnumber: form.nationalId,
-      bank_account_no: form.bankAccount,
-      status: "pending",
-      role: "sale",
-      is_approved: false,
-    }));
-
-    // Clean up credentials
+ 
+    // Clean up localStorage credentials
     localStorage.removeItem("pendingSignUpEmail");
     localStorage.removeItem("pendingSignUpPassword");
  

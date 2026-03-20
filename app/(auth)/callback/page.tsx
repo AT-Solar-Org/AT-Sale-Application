@@ -8,92 +8,96 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    let handled = false;
-
     async function handleCallback() {
       const hash = window.location.hash;
+      const query = new URLSearchParams(window.location.search);
+      const code = query.get("code");
 
-      if (hash && hash.includes("access_token")) {
+      let session = null;
+
+      // PKCE code flow (most common with Resend/custom SMTP)
+      if (code) {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error || !data.session) {
+          router.replace("/auth");
+          return;
+        }
+        session = data.session;
+
+      // Hash token flow (older Supabase default)
+      } else if (hash && hash.includes("access_token")) {
         const params = new URLSearchParams(hash.substring(1));
         const accessToken = params.get("access_token");
         const refreshToken = params.get("refresh_token");
 
-        if (accessToken && refreshToken) {
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
+        if (!accessToken || !refreshToken) {
+          router.replace("/auth");
+          return;
+        }
 
-          if (error || !data.session) {
-            console.error("Failed to set session:", error?.message);
-            router.replace("/auth");
-            return;
-          }
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
 
-          if (handled) return;
-          handled = true;
+        if (error || !data.session) {
+          router.replace("/auth");
+          return;
+        }
+        session = data.session;
 
-          const user = data.session.user;
+      } else {
+        // No code or hash check for existing session
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          session = data.session;
+        } else {
+          router.replace("/auth");
+          return;
+        }
+      }
 
-          // Check if public.users row already exists
-          const { data: existing } = await supabase
+      const user = session.user;
+
+      // Check if public.users row already exists
+      const { data: existing } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", user.id)
+        .single();
+
+      if (!existing) {
+        const pendingProfile = user.user_metadata?.pending_profile;
+
+        if (pendingProfile) {
+          const { error: insertError } = await supabase
             .from("users")
-            .select("id")
-            .eq("id", user.id)
-            .single();
+            .insert({ id: user.id, ...pendingProfile });
 
-          if (!existing) {
-            const raw = localStorage.getItem("pendingProfileData");
-
-            if (raw) {
-              const profileData = JSON.parse(raw);
-
-              // Try insert first
-              const { error: insertError } = await supabase
+          if (insertError) {
+            if (insertError.code === "23505") {
+              // Row already exists update instead
+              await supabase
                 .from("users")
-                .insert({ id: user.id, ...profileData });
-
-              if (insertError) {
-                if (insertError.code === "23505") {
-                  // If row already exists update instead
-                  const { error: updateError } = await supabase
-                    .from("users")
-                    .update(profileData)
-                    .eq("id", user.id);
-
-                  if (updateError) {
-                    console.error("Failed to update user profile:", updateError.message);
-                    router.replace("/auth");
-                    return;
-                  }
-                } else {
-                  console.error("Failed to insert user profile:", insertError.message);
-                  router.replace("/auth");
-                  return;
-                }
-              }
-
-              localStorage.removeItem("pendingProfileData");
+                .update(pendingProfile)
+                .eq("id", user.id);
             } else {
-              // localStorage empty — send back to fill form
-              router.replace(`/signup?email=${encodeURIComponent(user.email ?? "")}`);
+              router.replace("/auth");
               return;
             }
           }
 
-          router.replace("/pending");
+          // Clear pending_profile from metadata
+          await supabase.auth.updateUser({ data: { pending_profile: null } });
+
         } else {
-          router.replace("/auth");
-        }
-      } else {
-        // No hash token — code-based flow fallback
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          router.replace("/pending");
-        } else {
-          router.replace("/auth");
+          // No profile data send back to complete form
+          router.replace(`/signup?email=${encodeURIComponent(user.email ?? "")}`);
+          return;
         }
       }
+
+      router.replace("/pending");
     }
 
     handleCallback();
